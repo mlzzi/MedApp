@@ -9,7 +9,6 @@ project.afterEvaluate{
 detekt {
     toolVersion = "1.23.0"
 
-    // Orienta o Detekt a ler o código fonte de cada módulo
     def inputDirFiles = []
     rootProject.subprojects.each {module ->
         if (module.name != "testing") {

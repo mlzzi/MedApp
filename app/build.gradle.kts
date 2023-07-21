@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
-
 plugins {
     id("com.android.application")
     kotlin("android")
@@ -56,7 +54,6 @@ android {
         getByName("release") {
             signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
-            isShrinkResources = true
             isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
