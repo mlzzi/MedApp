@@ -1,16 +1,27 @@
-import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
-
 plugins {
     id("com.android.application")
+    kotlin("android")
     id("kotlin-android")
     id("dagger.hilt.android.plugin")
     id("com.google.devtools.ksp")
     kotlin("kapt")
 }
 
+apply(from = "../config/detekt/detekt.gradle")
+
 android {
     namespace = "com.leafwise.medapp"
     compileSdk = 33
+
+    signingConfigs {
+        create("release") {
+            storeFile =
+                file("/Users/thiagomonteiro/AndroidStudioProjects/MedApp/store/leafwise_med_app_key_store")
+            storePassword = "gf4BM%84tNfPkKK%mk^3H8RvPgTLNB$5BFTbrs*&4%XAs6xUtN"
+            keyPassword = "gf4BM%84tNfPkKK%mk^3H8RvPgTLNB$5BFTbrs*&4%XAs6xUtN"
+            keyAlias = "leafwise_med_app"
+        }
+    }
 
     defaultConfig {
         applicationId = "com.leafwise.medapp"
@@ -26,7 +37,22 @@ android {
     }
 
     buildTypes {
-        release {
+        getByName("debug") {
+            applicationIdSuffix = ".debug"
+            isDebuggable = true
+        }
+        create("staging") {
+            initWith(getByName("debug"))
+            applicationIdSuffix = ".staging"
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+                "proguard-rules-staging.pro"
+            )
+        }
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
@@ -100,6 +126,13 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     // Android Studio Preview support
     debugImplementation("androidx.compose.ui:ui-tooling")
+
+    // Retrofit
+    implementation("com.squareup.retrofit2:retrofit:${LibVersion.retrofitVersion}")
+    implementation("com.squareup.retrofit2:converter-gson:${LibVersion.retrofitVersion}")
+
+    //Gson
+    implementation("com.google.code.gson:gson:${LibVersion.retrofitVersion}")
 }
 
 // Pass options to Room ksp processor
