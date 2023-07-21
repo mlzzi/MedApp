@@ -10,12 +10,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.leafwise.medapp.R
-import com.leafwise.medapp.presentation.ui.theme.Red
 
 @Composable
 fun MedicationAddButton() {
     FloatingActionButton(
-        containerColor = Red,
         onClick = { /*TODO*/ }) {
         Icon(
             modifier = Modifier

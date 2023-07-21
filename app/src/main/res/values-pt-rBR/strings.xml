@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MedApp</string>
+    <string name="home_empty_view">Não há medicamentos cadastrados! Conte-me sobre o que você precisa e nós cuidaremos!</string>
+</resources>

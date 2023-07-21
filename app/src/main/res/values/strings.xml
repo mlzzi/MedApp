@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">MedApp</string>
+
+<!--    Home-->
+    <string name="home_empty_view">There is no meds registered! Tell me about the ones you need and we will take care!</string>
 </resources>
