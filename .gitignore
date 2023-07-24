@@ -1,13 +1,13 @@
 *.iml
 .gradle
-/local.properties
+/local.propertie
+/keystore.properties
 /.idea
 .DS_Store
 /build
 /captures
 .externalNativeBuild
 .cxx
-local.properties
 app/schemas
 app/release
 /store
