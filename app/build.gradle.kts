@@ -111,6 +111,7 @@ dependencies {
 
     implementation("androidx.room:room-runtime:${LibVersion.roomVersion}")
     implementation("androidx.room:room-ktx:${LibVersion.roomVersion}")
+    implementation("androidx.room:room-testing:${LibVersion.roomVersion}")
     ksp("androidx.room:room-compiler:${LibVersion.roomVersion}")
 
     implementation("io.github.hadiyarajesh.flower-retrofit:flower-retrofit:${LibVersion.flowerVersion}") {
