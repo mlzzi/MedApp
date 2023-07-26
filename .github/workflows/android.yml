@@ -31,7 +31,7 @@ jobs:
       uses: sparkfabrik/android-build-action@v1.5.0
       with:
         # You can build an unsigned APK (assemble) or a signed AAB (bundle).
-        build-type: debug
+#         build-type: # optional, default is assemble
         # Name of the gradle task to exec (eg. assembleDebug, assembleRelease, bundleRelease)
 #         gradle-task: # optional, default is assembleDebug
         # Increment build number
