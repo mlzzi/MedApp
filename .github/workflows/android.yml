@@ -49,7 +49,7 @@ jobs:
         # Upload to Play Store
 #         upload-to-play-store: # optional
         # Project path
-        project-path: ./gradlew assembleDebug
+        project-path: .
         # Output path of the build
 #         output-path: # optional, default is output.apk
         # Boolean to tell the Action to upload the .ipa to Browserstack App Live after the build.
