@@ -68,7 +68,7 @@ fun MedicationSheet(showBottomSheet: MutableState<Boolean>) {
 
                     Icon(
                         Icons.Filled.Done,
-                        contentDescription = "Hide bottom sheet"
+                        contentDescription = stringResource(id = R.string.save)
                     )
                     Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                     Text(stringResource(id = R.string.save))
