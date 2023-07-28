@@ -5,7 +5,12 @@ import androidx.room.RoomDatabase
 import com.leafwise.medapp.framework.db.dao.MedicationDao
 import com.leafwise.medapp.framework.db.entity.MedicationEntity
 
-@Database(entities = [MedicationEntity::class], version = 1)
+@Database(
+    entities = [MedicationEntity::class],
+    version = 1,
+    //When first migration is needed, set exportSchema to true
+    exportSchema = false
+)
 
 abstract class AppDatabase : RoomDatabase() {
     abstract fun medicationDao(): MedicationDao

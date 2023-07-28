@@ -1,4 +1,4 @@
-package com.leafwise.medapp.presentation.ui.navigation
+package com.leafwise.medapp.presentation.navigation
 
 import androidx.annotation.DrawableRes
 import com.leafwise.medapp.R

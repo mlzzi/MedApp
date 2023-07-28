@@ -11,12 +11,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -27,24 +29,31 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.leafwise.medapp.R
 import com.leafwise.medapp.framework.db.entity.MedicationEntity
-import com.leafwise.medapp.presentation.ui.components.LoadingIndicator
-import com.leafwise.medapp.presentation.ui.components.MedItem
+import com.leafwise.medapp.presentation.components.LoadingIndicator
+import com.leafwise.medapp.presentation.components.MedItem
+import com.leafwise.medapp.presentation.components.MedAddButton
+import com.leafwise.medapp.presentation.ui.medication.MedicationSheet
 
 
 @Suppress("UnusedParameter")
 @Composable
 fun HomeScreen(
     uiState: HomeViewModel.HomeUiState,
-    onNavigateClick: (source: String) -> Unit
+    onNavigateClick: () -> Unit
 ) {
+
+    val showBottomSheet = remember { mutableStateOf(false) }
+
     Scaffold(
-        floatingActionButton = { MedicationAddButton() }
+        floatingActionButton = {
+            MedAddButton { showBottomSheet.value = true }
+        },
     ) { innerPadding ->
         Surface(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
-            color = MaterialTheme.colorScheme.background
+            color = MaterialTheme.colorScheme.background,
         ) {
             Column(
                 modifier = Modifier
@@ -53,6 +62,7 @@ fun HomeScreen(
             ) {
 
                 HomeHeader()
+                HomeSheet(showBottomSheet)
                 when (uiState) {
                     is HomeViewModel.HomeUiState.Loading -> {
                         LoadingIndicator(modifier = Modifier.fillMaxSize())
@@ -67,7 +77,7 @@ fun HomeScreen(
                     }
 
                     is HomeViewModel.HomeUiState.Error -> {
-
+                        EmptyView()
                     }
                 }
 
@@ -95,6 +105,11 @@ fun HomeHeader() {
             fontWeight = FontWeight.Bold
         )
     }
+}
+
+@Composable
+fun HomeSheet(showBottomSheet: MutableState<Boolean>) {
+    if(showBottomSheet.value) MedicationSheet(showBottomSheet)
 }
 
 @Composable
@@ -156,6 +171,15 @@ fun HomeSuccess() {
 fun HomeLoading() {
     HomeScreen(
         HomeViewModel.HomeUiState.Loading,
+        {}
+    )
+}
+
+@Preview
+@Composable
+fun HomeError() {
+    HomeScreen(
+        HomeViewModel.HomeUiState.Error(""),
         {}
     )
 }

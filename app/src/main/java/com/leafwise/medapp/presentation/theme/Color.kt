@@ -1,4 +1,4 @@
-package com.leafwise.medapp.presentation.ui.theme
+package com.leafwise.medapp.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
