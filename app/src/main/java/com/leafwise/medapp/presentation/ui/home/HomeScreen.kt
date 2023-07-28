@@ -43,7 +43,7 @@ fun HomeScreen(
 ) {
 
     val showBottomSheet = remember { mutableStateOf(false) }
-
+    HomeSheet(showBottomSheet)
     Scaffold(
         floatingActionButton = {
             MedAddButton { showBottomSheet.value = true }
@@ -62,7 +62,7 @@ fun HomeScreen(
             ) {
 
                 HomeHeader()
-                HomeSheet(showBottomSheet)
+
                 when (uiState) {
                     is HomeViewModel.HomeUiState.Loading -> {
                         LoadingIndicator(modifier = Modifier.fillMaxSize())
