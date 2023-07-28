@@ -65,7 +65,7 @@ jobs:
         # Specify the Bundler version you wish to use
 #         bundler-version: # optional, default is 2.3
         # Specify the Fastlane version you wish to use
-        fastlane-version: 2.214.0
+#         fastlane-version: 2.214.0
         # Release track to target
 #         release-track: # optional, default is internal
         # Status of the release
