@@ -1,4 +1,4 @@
-package com.leafwise.medapp.presentation.ui.theme
+package com.leafwise.medapp.presentation.theme
 
 import android.app.Activity
 import android.os.Build
