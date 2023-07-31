@@ -2,6 +2,7 @@ package com.leafwise.medapp.presentation.ui.medication
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +16,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -25,13 +27,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.leafwise.medapp.R
-import com.leafwise.medapp.presentation.components.Selector
+import com.leafwise.medapp.presentation.components.SelectorItem
+import com.leafwise.medapp.presentation.components.TextItem
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,19 +53,20 @@ fun MedicationSheet(showBottomSheet: MutableState<Boolean>) {
         sheetState = sheetState,
 
     ) {
-
-
             Column(
                 Modifier
-
                     .padding(horizontal = 16.dp)
                     .fillMaxSize()
                     .verticalScroll(scrollState),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(stringResource(id = R.string.dummy_text))
                 // Sheet content
+                Text(
+                    text = stringResource(id = R.string.medsheet_title),
+                    style = MaterialTheme.typography.headlineMedium,
+                )
+
                 InfoContent()
 
                 Button(
@@ -93,35 +98,40 @@ fun MedicationSheet(showBottomSheet: MutableState<Boolean>) {
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Suppress("MagicNumber")
 @Composable
 fun InfoContent() {
-    var medName by remember{ mutableStateOf("") }
-    var medType by remember{ mutableStateOf("Tipo") }
-    //var medQuantity by remember{ mutableStateOf("") }
+    var medName by rememberSaveable{ mutableStateOf("") }
+    var medType by rememberSaveable{ mutableStateOf("Tipo") }
+    var medQuantity by rememberSaveable{ mutableStateOf("") }
 
-    OutlinedTextField(
-        modifier = Modifier.fillMaxWidth(),
+    TextItem(
+        label = stringResource(id = R.string.medsheet_medication),
         value = medName,
-        onValueChange = { medName = it },
-        label = { Text(stringResource(id = R.string.medsheet_medication)) },
+        onChange = { medName = it }
     )
 
+    Row (
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ){
+        SelectorItem(
+            modifier = Modifier.weight(1f),
+            label = stringResource(id = R.string.medsheet_type),
+            options = arrayOf("Pill", "Comprimido", "Gotas", "Seringa"),
+            selectedIndex = 0,
+            onSelect = { medType = it.toString() }
+        )
 
-    Selector(
-        label = stringResource(id = R.string.medsheet_type),
-        options = arrayOf("Tipo", "Comprimido", "Gotas", "Seringa"),
-        selectedIndex = 0,
-        onSelect = { medType = it.toString() }
-    )
+        SelectorItem(
+            modifier = Modifier.weight(1f),
+            label = stringResource(id = R.string.medsheet_quantity),
+            options = arrayOf("1", "2", "3"),
+            selectedIndex = 0,
+            onSelect = { medQuantity = it.toString() }
+        )
+    }
 
-    Selector(
-        label = stringResource(id = R.string.medsheet_quantity),
-        options = arrayOf("Quantidade", "1", "2", "3"),
-        selectedIndex = 0,
-        onSelect = { medType = it.toString() }
-    )
+
 
 
 

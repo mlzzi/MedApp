@@ -8,4 +8,5 @@
     <string name="medsheet_medication">Medicação</string>
     <string name="medsheet_type">Tipo</string>
     <string name="medsheet_quantity">Quantidade</string>
+    <string name="medsheet_title">Adicionar medicação</string>
 </resources>
