@@ -1,3 +1,6 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     id("com.android.application")
     kotlin("android")
@@ -9,17 +12,21 @@ plugins {
 
 apply(from = "../config/detekt/detekt.gradle")
 
+// Getting keystore properties
+val keystorePropertiesFile = rootProject.file("keystore.properties")
+val keystoreProperties = Properties()
+keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+
 android {
     namespace = "com.leafwise.medapp"
     compileSdk = 34
 
     signingConfigs {
         create("release") {
-            storeFile =
-                file("/Users/thiagomonteiro/AndroidStudioProjects/MedApp/store/leafwise_med_app_key_store")
-            storePassword = "gf4BM%84tNfPkKK%mk^3H8RvPgTLNB$5BFTbrs*&4%XAs6xUtN"
-            keyPassword = "gf4BM%84tNfPkKK%mk^3H8RvPgTLNB$5BFTbrs*&4%XAs6xUtN"
-            keyAlias = "leafwise_med_app"
+            keyAlias = keystoreProperties["keyAlias"] as String
+            keyPassword = keystoreProperties["keyPassword"] as String
+            storeFile = file(keystoreProperties["storeFile"] as String)
+            storePassword = keystoreProperties["storePassword"] as String
         }
     }
 
