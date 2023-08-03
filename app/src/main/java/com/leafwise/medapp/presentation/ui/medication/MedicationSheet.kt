@@ -37,6 +37,7 @@ import com.leafwise.medapp.presentation.components.SelectDataItem
 import com.leafwise.medapp.presentation.components.SelectorItem
 import com.leafwise.medapp.presentation.components.TextItem
 import kotlinx.coroutines.launch
+import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Suppress("MagicNumber")
@@ -186,13 +187,15 @@ private fun DateInfo() {
 private fun DoseDateDetail() {
     SelectDataItem(
         label = "Dose 1",
-        value = "4:00 PM",
-        onValueChange = {}
+        value = Calendar.getInstance(),
+        onValueChange = {
+
+        }
     )
 
     SelectDataItem(
         label = "Dose 2",
-        value = "4:00 PM",
+        value = Calendar.getInstance(),
         onValueChange = {}
     )
 

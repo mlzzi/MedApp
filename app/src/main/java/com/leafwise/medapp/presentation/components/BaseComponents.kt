@@ -17,19 +17,19 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.Wallpapers
 import com.leafwise.medapp.R
-import java.time.LocalDate
+import com.leafwise.medapp.presentation.extensions.toHourFormat
+import java.util.Calendar
 
 @Composable
 fun SelectorItem (
@@ -97,30 +97,23 @@ fun TextItem(
 fun SelectDataItem(
     modifier: Modifier = Modifier,
     label: String,
-    value: String,
+    value: Calendar,
     onValueChange: (String) -> Unit,
 ) {
 
     val datePickerDialog = remember { mutableStateOf(false) }
-    val timePicker = remember { mutableStateOf("") }
-
-    val date =
-        LocalDate.now()
-
-    val year = date.year
-    val monthValue = date.monthValue
-    val dayOfMonth = date.dayOfMonth
+    val timePicker = remember { mutableStateOf(value) }
 
 
     OutlinedTextField(
         modifier = modifier
             .fillMaxWidth()
             .onFocusChanged {
-            datePickerDialog.value = it.isFocused
-        },
-        value = value,
+                datePickerDialog.value = it.isFocused
+            },
+        value = timePicker.value.toHourFormat(),
         onValueChange = {
-            onValueChange(LocalDate.of(year, monthValue, dayOfMonth).toString())
+            onValueChange(it)
         },
         label = { Text(text = label) },
         readOnly = true,
@@ -139,13 +132,12 @@ fun SelectDataItem(
         TimePickerDialog(
             onDismissRequest = { datePickerDialog.value = false },
             onTimeChanged = {
-                timePicker.value = it.toString()
+                timePicker.value = it
             },
-            selectedTime = TimeSelection(5, 55),
-            confirmLabel = "Agendar",
-            title = "Dose 1"
+            selectedTime = timePicker.value,
+            confirmLabel = stringResource(id = R.string.medsheet_schedule),
+            title = stringResource(id = R.string.medsheet_select_time)
         )
-
 
 }
 
@@ -155,23 +147,26 @@ fun SelectDataItem(
 @Composable
 fun TimePickerDialog(
     onDismissRequest: () -> Unit,
-    onTimeChanged: (TimeSelection) -> Unit,
-    selectedTime: TimeSelection,
+    onTimeChanged: (Calendar) -> Unit,
+    selectedTime: Calendar,
     confirmLabel: String,
     title: String,
 ) {
-    val timePickerState = rememberTimePickerState(selectedTime.hour, selectedTime.minute)
-
-    LaunchedEffect(timePickerState) {
-        val timeSelection = TimeSelection(timePickerState.hour, timePickerState.minute)
-        snapshotFlow { timeSelection }
-            .collect { onTimeChanged(it) }
-    }
+    val timePickerState = rememberTimePickerState(
+        selectedTime.get(Calendar.HOUR_OF_DAY),
+        selectedTime.get(Calendar.MINUTE)
+    )
 
     AlertDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {
-            Button(onClick = onDismissRequest) {
+            Button(onClick = {
+                val timeSelection = Calendar.getInstance()
+                timeSelection.set(Calendar.HOUR_OF_DAY, timePickerState.hour)
+                timeSelection.set(Calendar.MINUTE, timePickerState.minute)
+                onTimeChanged(timeSelection)
+                onDismissRequest()
+            }) {
                 Text(text = confirmLabel)
             }
         },
@@ -211,7 +206,7 @@ fun TextItemPreview(){
 fun SelectDataItemPreview(){
     SelectDataItem(
         label = "Dose 1",
-        value = "4:00 PM",
+        value = Calendar.getInstance(),
         onValueChange = {}
     )
 }

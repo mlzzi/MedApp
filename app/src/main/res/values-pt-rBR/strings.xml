@@ -13,4 +13,6 @@
     <string name="medsheet_how_many_times">Quantas vezes ao dia</string>
     <string name="medsheet_how_many_days">Por quantos dias</string>
     <string name="medsheet_dose">Dose 1</string>
+    <string name="medsheet_schedule">Agendar</string>
+    <string name="medsheet_select_time">Selecione a hora</string>
 </resources>
