@@ -33,7 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.leafwise.medapp.R
-import com.leafwise.medapp.presentation.components.SelectDataItem
+import com.leafwise.medapp.presentation.components.SelectDateItem
 import com.leafwise.medapp.presentation.components.SelectorItem
 import com.leafwise.medapp.presentation.components.TextItem
 import kotlinx.coroutines.launch
@@ -185,7 +185,7 @@ private fun DateInfo() {
 
 @Composable
 private fun DoseDateDetail() {
-    SelectDataItem(
+    SelectDateItem(
         label = "Dose 1",
         value = Calendar.getInstance(),
         onValueChange = {
@@ -193,7 +193,7 @@ private fun DoseDateDetail() {
         }
     )
 
-    SelectDataItem(
+    SelectDateItem(
         label = "Dose 2",
         value = Calendar.getInstance(),
         onValueChange = {}

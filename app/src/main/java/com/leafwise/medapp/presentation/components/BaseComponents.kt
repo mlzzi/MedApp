@@ -23,12 +23,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.Wallpapers
 import com.leafwise.medapp.R
-import com.leafwise.medapp.presentation.extensions.toHourFormat
+import com.leafwise.medapp.util.extensions.toHourFormat
 import java.util.Calendar
 
 @Composable
@@ -94,12 +95,14 @@ fun TextItem(
 
 @Suppress("MagicNumber")
 @Composable
-fun SelectDataItem(
+fun SelectDateItem(
     modifier: Modifier = Modifier,
     label: String,
     value: Calendar,
     onValueChange: (String) -> Unit,
 ) {
+
+    val locale = LocalContext.current.resources.configuration.locales.get(0)
 
     val datePickerDialog = remember { mutableStateOf(false) }
     val timePicker = remember { mutableStateOf(value) }
@@ -111,7 +114,7 @@ fun SelectDataItem(
             .onFocusChanged {
                 datePickerDialog.value = it.isFocused
             },
-        value = timePicker.value.toHourFormat(),
+        value = timePicker.value.toHourFormat(locale),
         onValueChange = {
             onValueChange(it)
         },
@@ -203,8 +206,8 @@ fun TextItemPreview(){
     wallpaper = Wallpapers.BLUE_DOMINATED_EXAMPLE
 )
 @Composable
-fun SelectDataItemPreview(){
-    SelectDataItem(
+fun SelectDateItemPreview(){
+    SelectDateItem(
         label = "Dose 1",
         value = Calendar.getInstance(),
         onValueChange = {}
