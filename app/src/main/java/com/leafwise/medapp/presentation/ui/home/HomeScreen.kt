@@ -160,7 +160,8 @@ fun DarkHome() {
 fun HomeSuccess() {
     HomeScreen(
         HomeViewModel.HomeUiState.Success(
-            listOf(MedicationEntity(1), MedicationEntity(2))
+            listOf(MedicationEntity(1, "Name", 2, 2),
+                MedicationEntity(2, "Name2", 3, 1))
         ),
         {}
     )

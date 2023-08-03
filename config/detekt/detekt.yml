@@ -620,7 +620,7 @@ style:
     ignoreLocalVariableDeclaration: false
     ignoreConstantDeclaration: true
     ignoreCompanionObjectPropertyDeclaration: true
-    ignoreAnnotation: false
+    ignoreAnnotated: ['Composable', 'Preview']
     ignoreNamedArgument: true
     ignoreEnums: false
     ignoreRanges: false
