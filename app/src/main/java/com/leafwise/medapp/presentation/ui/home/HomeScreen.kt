@@ -1,6 +1,13 @@
 package com.leafwise.medapp.presentation.ui.home
 
+import android.content.Intent
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.os.Build
+import android.provider.Settings
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,11 +18,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Warning
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,14 +51,28 @@ import com.leafwise.medapp.presentation.ui.medication.MedicationSheet
 @Composable
 fun HomeScreen(
     uiState: HomeViewModel.HomeUiState,
-    onNavigateClick: () -> Unit
-) {
+    onAddClick: () -> Unit,
+    verifyPermissions: () -> Unit,
+    ) {
 
     val showBottomSheet = remember { mutableStateOf(false) }
 
+    //Verify permission
+    LaunchedEffect(Unit){
+        verifyPermissions()
+    }
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()) {
+        verifyPermissions()
+    }
+
+
     Scaffold(
         floatingActionButton = {
-            MedAddButton { showBottomSheet.value = true }
+            MedAddButton {
+                showBottomSheet.value = true
+            }
         },
     ) { innerPadding ->
         Surface(
@@ -55,6 +81,8 @@ fun HomeScreen(
                 .padding(16.dp),
             color = MaterialTheme.colorScheme.background,
         ) {
+
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -77,7 +105,7 @@ fun HomeScreen(
                     }
 
                     is HomeViewModel.HomeUiState.Error -> {
-                        EmptyView()
+                        ErrorView(uiState.message, launcher)
                     }
                 }
 
@@ -129,6 +157,7 @@ fun HomeContent(content: List<MedicationEntity>) {
 @Composable
 fun EmptyView() {
     Box (modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+
         Text(
             text = stringResource(id = R.string.home_empty_view),
             style = MaterialTheme.typography.bodyMedium,
@@ -137,12 +166,52 @@ fun EmptyView() {
     }
 }
 
+@Composable
+fun ErrorView(
+    message: String,
+    launcher: ManagedActivityResultLauncher<Intent, ActivityResult>,
+) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            Icons.Rounded.Warning,
+            tint = MaterialTheme.colorScheme.error,
+            contentDescription = "alertIcon",
+        )
+
+        Text(
+            text = message,
+            style = MaterialTheme.typography.bodyLarge,
+        )
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            TextButton(
+                onClick = {
+                    launcher.launch(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
+                },
+                modifier = Modifier.padding(top = 8.dp)
+            ) {
+                Text(
+                    text = stringResource(id = R.string.home_error_button_text),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+        }
+
+    }
+}
+
 @Preview
 @Composable
 fun HomeEmpty() {
     HomeScreen(
-        HomeViewModel.HomeUiState.Empty,
-        {}
+        uiState = HomeViewModel.HomeUiState.Empty,
+        onAddClick = {  },
+        verifyPermissions = { true }
     )
 }
 
@@ -150,8 +219,9 @@ fun HomeEmpty() {
 @Composable
 fun DarkHome() {
     HomeScreen(
-        HomeViewModel.HomeUiState.Empty,
-        {}
+        uiState = HomeViewModel.HomeUiState.Empty,
+        onAddClick = { },
+        verifyPermissions = { true }
     )
 }
 
@@ -159,10 +229,11 @@ fun DarkHome() {
 @Composable
 fun HomeSuccess() {
     HomeScreen(
-        HomeViewModel.HomeUiState.Success(
+        uiState = HomeViewModel.HomeUiState.Success(
             listOf(MedicationEntity(1), MedicationEntity(2))
         ),
-        {}
+        onAddClick = { },
+        verifyPermissions = { true }
     )
 }
 
@@ -170,8 +241,9 @@ fun HomeSuccess() {
 @Composable
 fun HomeLoading() {
     HomeScreen(
-        HomeViewModel.HomeUiState.Loading,
-        {}
+        uiState = HomeViewModel.HomeUiState.Loading,
+        onAddClick = { },
+        verifyPermissions = { true }
     )
 }
 
@@ -179,7 +251,8 @@ fun HomeLoading() {
 @Composable
 fun HomeError() {
     HomeScreen(
-        HomeViewModel.HomeUiState.Error(""),
-        {}
+        uiState = HomeViewModel.HomeUiState.Error("Error!"),
+        onAddClick = { },
+        verifyPermissions = { true }
     )
 }

@@ -1,18 +1,46 @@
 package com.leafwise.medapp.presentation.ui.home
 
+import android.app.Activity
+import android.content.Intent
 import androidx.lifecycle.ViewModel
 import com.leafwise.medapp.framework.db.entity.MedicationEntity
+import com.leafwise.medapp.util.AlarmUtil
+import com.leafwise.medapp.util.Permissions
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import javax.inject.Inject
 
-class HomeViewModel : ViewModel() {
+@HiltViewModel
+class HomeViewModel @Inject constructor(
+    private val alarmUtil: AlarmUtil,
+    private val permissions: Permissions
+): ViewModel() {
 
     private val _homeUiState = MutableStateFlow<HomeUiState>(HomeUiState.Empty)
     val homeUiState: StateFlow<HomeUiState> = _homeUiState.asStateFlow()
 
-    fun addMedication() {
-        //_homeUiState.value = HomeUiState.Adding
+    //Should verify if the user has permission to schedule an alarm and if not, show a message
+    fun verifyPermissions()  {
+        if (permissions.hasSetAlarmPermission()) {
+            //Should RESET UI state to... TODO FIX empty or success
+            _homeUiState.value = HomeUiState.Empty
+
+        } else {
+            // Show a toast message indicating that the user doesn't have the required permission
+            _homeUiState.value = HomeUiState.Error(
+                message = "Permission required to schedule alarms."
+            )
+
+        }
+    }
+    fun addMedication()  {
+
+    }
+
+    fun saveMedication(){
+
     }
 
     sealed class HomeUiState {

@@ -139,6 +139,9 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:${LibVersion.retrofitVersion}")
     implementation("com.squareup.retrofit2:converter-gson:${LibVersion.retrofitVersion}")
 
+    //Permissions Compose
+    implementation("com.google.accompanist:accompanist-permissions:0.12.0")
+
     //Gson
     implementation("com.google.code.gson:gson:${LibVersion.retrofitVersion}")
 }

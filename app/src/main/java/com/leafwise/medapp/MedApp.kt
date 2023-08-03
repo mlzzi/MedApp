@@ -1,4 +1,4 @@
-package com.leafwise.medapp.framework.di
+package com.leafwise.medapp
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
