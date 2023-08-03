@@ -105,7 +105,7 @@ fun HomeScreen(
                     }
 
                     is HomeViewModel.HomeUiState.Error -> {
-                        ErrorView(uiState.message, launcher)
+                        ErrorView(stringResource(id = uiState.message), launcher)
                     }
                 }
 
@@ -251,7 +251,7 @@ fun HomeLoading() {
 @Composable
 fun HomeError() {
     HomeScreen(
-        uiState = HomeViewModel.HomeUiState.Error("Error!"),
+        uiState = HomeViewModel.HomeUiState.Error(R.string.home_empty_view),
         onAddClick = { },
         verifyPermissions = { true }
     )

@@ -6,4 +6,5 @@
     <string name="dismiss">Dispensar</string>
     <string name="add">Adicionar</string>
     <string name="home_error_button_text">Permitir permissão</string>
+    <string name="permission_error_required">Permisssão necessária para agendar alarme.</string>
 </resources>

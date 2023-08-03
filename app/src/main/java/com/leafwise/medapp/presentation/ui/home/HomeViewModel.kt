@@ -1,8 +1,8 @@
 package com.leafwise.medapp.presentation.ui.home
 
-import android.app.Activity
-import android.content.Intent
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
+import com.leafwise.medapp.R
 import com.leafwise.medapp.framework.db.entity.MedicationEntity
 import com.leafwise.medapp.util.AlarmUtil
 import com.leafwise.medapp.util.Permissions
@@ -30,7 +30,7 @@ class HomeViewModel @Inject constructor(
         } else {
             // Show a toast message indicating that the user doesn't have the required permission
             _homeUiState.value = HomeUiState.Error(
-                message = "Permission required to schedule alarms."
+                message = R.string.permission_error_required
             )
 
         }
@@ -47,6 +47,6 @@ class HomeViewModel @Inject constructor(
         object Empty : HomeUiState()
         object Loading : HomeUiState()
         class Success(val data: List<MedicationEntity>) : HomeUiState()
-        class Error(val message: String) : HomeUiState()
+        class Error(@StringRes val message: Int) : HomeUiState()
     }
 }
