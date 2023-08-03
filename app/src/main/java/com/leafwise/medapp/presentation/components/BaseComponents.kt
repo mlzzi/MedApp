@@ -28,7 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.Wallpapers
 import com.leafwise.medapp.R
-import com.leafwise.medapp.presentation.extensions.toHourFormat
+import com.leafwise.medapp.util.extensions.toHourFormat
 import java.util.Calendar
 
 @Composable

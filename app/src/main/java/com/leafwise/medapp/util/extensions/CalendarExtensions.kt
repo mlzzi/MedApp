@@ -1,4 +1,4 @@
-package com.leafwise.medapp.presentation.extensions
+package com.leafwise.medapp.util.extensions
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
@@ -13,8 +13,8 @@ fun Calendar.toHourFormat(): String {
 
     val currentLocale = LocalContext.current.resources.configuration.locales.get(0)
 
-    return when(currentLocale.country){
-        "BR" -> formato24h.format(time)
+    return when(currentLocale.language){
+        "pt" -> formato24h.format(time)
         else -> formato12h.format(time)
     }
 }
