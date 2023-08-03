@@ -9,4 +9,10 @@
     <string name="medsheet_type">Tipo</string>
     <string name="medsheet_quantity">Quantidade</string>
     <string name="medsheet_title">Adicionar medicação</string>
+    <string name="medsheet_frequency">Frequência</string>
+    <string name="medsheet_how_many_times">Quantas vezes ao dia</string>
+    <string name="medsheet_how_many_days">Por quantos dias</string>
+    <string name="medsheet_dose">Dose 1</string>
+    <string name="select_date_confirm_label">Agendar</string>
+    <string name="select_date_time_picker_title">Selecione a hora</string>
 </resources>
