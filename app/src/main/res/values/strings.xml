@@ -15,6 +15,6 @@
     <string name="medsheet_how_many_times">How many times per day</string>
     <string name="medsheet_how_many_days">How many days</string>
     <string name="medsheet_dose">Dose 1</string>
-    <string name="medsheet_schedule">Schedule</string>
-    <string name="medsheet_select_time">Select time</string>
+    <string name="select_date_confirm_label">Schedule</string>
+    <string name="select_date_time_picker_title">Select time</string>
 </resources>
