@@ -1,8 +1,11 @@
 package com.leafwise.medapp.presentation.ui.home
 
+import android.app.AlarmManager
 import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import com.leafwise.medapp.R
+import com.leafwise.medapp.domain.model.AlarmInfo
+import com.leafwise.medapp.domain.model.AlarmInterval
 import com.leafwise.medapp.framework.db.entity.MedicationEntity
 import com.leafwise.medapp.util.AlarmUtil
 import com.leafwise.medapp.util.Permissions
@@ -10,6 +13,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,8 +43,19 @@ class HomeViewModel @Inject constructor(
 
     }
 
-    fun saveMedication(){
-
+    fun scheduleAlarm(){
+        AlarmManager.INTERVAL_HOUR
+        val alarmInfo = AlarmInfo(
+            key = 0,
+            time = "12:00",
+            title = "Medication",
+            interval = AlarmInterval.EVERY_HOUR,
+            firstOccurrence = Calendar.getInstance().apply {
+                add(Calendar.SECOND, 20)
+            }
+        )
+        alarmUtil.scheduleExactAlarm(alarmInfo)
+        _homeUiState.value = HomeUiState.Success(listOf())
     }
 
     sealed class HomeUiState {

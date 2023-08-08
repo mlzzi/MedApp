@@ -40,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.leafwise.medapp.R
+import com.leafwise.medapp.domain.model.AlarmInfo
 import com.leafwise.medapp.framework.db.entity.MedicationEntity
 import com.leafwise.medapp.presentation.components.LoadingIndicator
 import com.leafwise.medapp.presentation.components.MedItem
@@ -71,6 +72,7 @@ fun HomeScreen(
     Scaffold(
         floatingActionButton = {
             MedAddButton {
+                onAddClick()
                 showBottomSheet.value = true
             }
         },

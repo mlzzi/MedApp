@@ -9,4 +9,15 @@
     <string name="add">Add</string>
     <string name="home_error_button_text">Allow permission</string>
     <string name="permission_error_required">Permission required to schedule alarms.</string>
+
+<!--    Alarms-->
+    <string name="every_hour">Every hour</string>
+    <string name="every_2_hours">Every 2 hours</string>
+    <string name="every_3_hours">Every 3 hours</string>
+    <string name="every_4_hours">Every 4 hours</string>
+    <string name="every_6_hours">Every 6 hours</string>
+    <string name="every_12_hours">Every 12 hours</string>
+    <string name="daily">Daily</string>
+    <string name="every_2_days">Every 2 days</string>
+    <string name="weekly">Weekly</string>
 </resources>

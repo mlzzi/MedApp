@@ -29,7 +29,7 @@ fun AppNavigation(
 
             HomeScreen(
                 uiState = homeScreenUiState,
-                onAddClick = { homeViewModel.addMedication() },
+                onAddClick = { homeViewModel.scheduleAlarm() },
                 verifyPermissions = { homeViewModel.verifyPermissions() }
             )
         }

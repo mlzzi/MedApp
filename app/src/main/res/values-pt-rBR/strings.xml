@@ -7,4 +7,15 @@
     <string name="add">Adicionar</string>
     <string name="home_error_button_text">Permitir permissão</string>
     <string name="permission_error_required">Permisssão necessária para agendar alarme.</string>
+
+    <!-- Alarm Interval Display Names -->
+    <string name="every_hour">A cada hora</string>
+    <string name="every_2_hours">A cada 2 horas</string>
+    <string name="every_3_hours">A cada 3 horas</string>
+    <string name="every_4_hours">A cada 4 horas</string>
+    <string name="every_6_hours">A cada 6 horas</string>
+    <string name="every_12_hours">A cada 12 horas</string>
+    <string name="daily">Diariamente</string>
+    <string name="every_2_days">A cada 2 dias</string>
+    <string name="weekly">Semanalmente</string>
 </resources>
