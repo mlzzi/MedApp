@@ -5,6 +5,7 @@ plugins {
     id("org.jetbrains.kotlin.android") version "1.8.21" apply false
     id("com.google.devtools.ksp") version "1.8.21-1.0.11" apply false
     id("io.gitlab.arturbosch.detekt") version "1.23.0"
+    id("com.google.gms.google-services") version "4.3.15" apply false
 }
 
 buildscript {

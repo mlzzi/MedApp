@@ -7,6 +7,7 @@ plugins {
     id("kotlin-android")
     id("dagger.hilt.android.plugin")
     id("com.google.devtools.ksp")
+    id("com.google.gms.google-services")
     kotlin("kapt")
 }
 
@@ -144,6 +145,10 @@ dependencies {
 
     //Gson
     implementation("com.google.code.gson:gson:${LibVersion.retrofitVersion}")
+
+    //Firebase
+    implementation(platform("com.google.firebase:firebase-bom:32.2.2"))
+    implementation("com.google.firebase:firebase-analytics-ktx")
 }
 
 // Pass options to Room ksp processor
