@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:524159688723:android:66cdf10e088d1de2e51fe6",
         "android_client_info": {
-          "package_name": "com.leafwise.medapp"
+          "package_name": "com.leafwise.medapp.debug"
         }
       },
       "oauth_client": [

@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">MedApp</string>
+    <string name="deep_link_host" translatable="false">medapp.com</string>
 
 <!--    Home-->
     <string name="home_empty_view">There is no meds registered! Tell me about the ones you need and we will take care!</string>
@@ -20,4 +21,9 @@
     <string name="daily">Daily</string>
     <string name="every_2_days">Every 2 days</string>
     <string name="weekly">Weekly</string>
+
+    <!--    Notifications-->
+    <string name="alarm_notification_channel_name">Alarm reminder</string>
+    <string name="alarm_notification_channel_description">Don\'t forget to take your meds</string>
+    <string name="alarm_notification_group_summary">%1$d meds to take</string>
 </resources>

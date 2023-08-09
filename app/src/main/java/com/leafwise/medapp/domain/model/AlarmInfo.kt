@@ -9,11 +9,24 @@ data class AlarmInfo(
     val key: Int,
     val time: String,
     val title: String,
+    val description : String,
     val interval: AlarmInterval,
     val firstOccurrence: Calendar
     ){
     companion object {
         const val ALARM_KEY = "ALARM_KEY"
+        const val ALARM_ACTION = "com.leafwise.medapp.domain.alarm.AlarmReceiver"
+
+        val TEST_ALARM = AlarmInfo(
+            key = 1,
+            time = "12:00",
+            title = "Dorflex",
+            description = "Take your medication",
+            interval = AlarmInterval.EVERY_MINUTES,
+            firstOccurrence = Calendar.getInstance().apply {
+                add(Calendar.SECOND, 20)
+            }
+        )
     }
 }
 

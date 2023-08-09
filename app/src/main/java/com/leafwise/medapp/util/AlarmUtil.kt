@@ -8,6 +8,7 @@ import android.os.Build
 import android.util.Log
 import com.leafwise.medapp.domain.alarm.AlarmReceiver
 import com.leafwise.medapp.domain.model.AlarmInfo
+import com.leafwise.medapp.domain.model.AlarmInfo.Companion.ALARM_ACTION
 import com.leafwise.medapp.domain.model.AlarmInfo.Companion.ALARM_KEY
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -28,20 +29,21 @@ class AlarmUtil @Inject constructor(
             alarmInfo.interval.getIntervalMillis(),
             context.makeAlarmPendingIntent(alarmInfo.key)
         )
-        Log.d("AlarmUtil", "scheduleExactAlarm: ")
     }
 
+    //TODO
     fun removeAlarm(alarmKey: Int){
         alarmManager.cancel(context.makeAlarmPendingIntent(alarmKey))
     }
 
+    //TODO
     fun rescheduleAlarm(){
 
     }
 
     private fun Context.makeAlarmPendingIntent(alarmKey: Int): PendingIntent {
         val intent = Intent(context, AlarmReceiver::class.java).apply {
-            action = "com.leafwise.medapp.domain.alarm.AlarmReceiver"
+            action = ALARM_ACTION
             putExtra(ALARM_KEY, alarmKey)
         }
         return PendingIntent.getBroadcast(
@@ -52,10 +54,5 @@ class AlarmUtil @Inject constructor(
     }
 
     fun canScheduleExactAlarm() = Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager.canScheduleExactAlarms()
-
-    companion object {
-        const val SECONDS = 1000
-        const val MINUTES = 60
-    }
 
 }

@@ -8,6 +8,7 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -39,6 +40,8 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberPermissionState
 import com.leafwise.medapp.R
 import com.leafwise.medapp.domain.model.AlarmInfo
 import com.leafwise.medapp.framework.db.entity.MedicationEntity
@@ -48,6 +51,8 @@ import com.leafwise.medapp.presentation.components.MedAddButton
 import com.leafwise.medapp.presentation.ui.medication.MedicationSheet
 
 
+
+@OptIn(ExperimentalPermissionsApi::class)
 @Suppress("UnusedParameter")
 @Composable
 fun HomeScreen(
@@ -57,6 +62,15 @@ fun HomeScreen(
     ) {
 
     val showBottomSheet = remember { mutableStateOf(false) }
+
+    // permission state
+    val notificationPermissionState = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        rememberPermissionState(
+            android.Manifest.permission.POST_NOTIFICATIONS
+        )
+    } else {
+        TODO("VERSION.SDK_INT < TIRAMISU")
+    }
 
     //Verify permission
     LaunchedEffect(Unit){
@@ -72,8 +86,13 @@ fun HomeScreen(
     Scaffold(
         floatingActionButton = {
             MedAddButton {
-                onAddClick()
-                showBottomSheet.value = true
+                if(!notificationPermissionState.hasPermission){
+                    notificationPermissionState.launchPermissionRequest()
+                } else {
+                    onAddClick()
+                    showBottomSheet.value = true
+                }
+
             }
         },
     ) { innerPadding ->
