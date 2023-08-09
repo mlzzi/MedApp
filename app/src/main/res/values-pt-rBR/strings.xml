@@ -16,6 +16,7 @@
     <string name="medsheet_schedule">Agendar</string>
     <string name="medsheet_select_time">Selecione a hora</string>
     <!--    Type medication labels-->
+    <string name="medsheet_type_none">Nenhum</string>
     <string name="medsheet_type_pill">Comprimido</string>
     <string name="medsheet_type_injection">Injeção</string>
     <string name="medsheet_type_syrup">Xarope</string>
@@ -25,4 +26,6 @@
     <string name="medsheet_type_ophthalmic_drops">Gotas oftálmicas</string>
     <string name="medsheet_type_aerosol_inhaler">Aerosol/Inalador</string>
     <string name="medsheet_type_long_acting_injectable">Injetável de longa duração</string>
+    <string name="medication_added">A medicação foi adicionada com sucesso!</string>
+    <string name="some_unknown_error">Ocorreu algum erro desconhecido.</string>
 </resources>

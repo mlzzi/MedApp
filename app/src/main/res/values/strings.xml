@@ -21,6 +21,7 @@
     <string name="medsheet_select_time">Select time</string>
 
 <!--    Type medication labels-->
+    <string name="medsheet_type_none">None</string>
     <string name="medsheet_type_pill">Pill</string>
     <string name="medsheet_type_injection">Injection</string>
     <string name="medsheet_type_syrup">Syrup</string>
@@ -30,6 +31,8 @@
     <string name="medsheet_type_ophthalmic_drops">Ophthalmic drops</string>
     <string name="medsheet_type_aerosol_inhaler">Aerosol/Inhaler</string>
     <string name="medsheet_type_long_acting_injectable">Long-acting injectable</string>
+    <string name="medication_added">The medication has been successfully added!</string>
+    <string name="some_unknown_error">Some unknown error occurred.</string>
 
 
 </resources>

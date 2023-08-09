@@ -23,6 +23,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -33,16 +34,22 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.leafwise.medapp.R
+import com.leafwise.medapp.domain.model.Medication
+import com.leafwise.medapp.domain.model.TypeMedication
 import com.leafwise.medapp.presentation.components.SelectDateItem
 import com.leafwise.medapp.presentation.components.SelectorItem
 import com.leafwise.medapp.presentation.components.TextItem
+import com.leafwise.medapp.util.extensions.getQuantityList
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Suppress("MagicNumber")
 @Composable
-fun MedicationSheet(showBottomSheet: MutableState<Boolean>) {
+fun MedicationSheet(
+    showBottomSheet: MutableState<Boolean>,
+    addMedication: (medication: Medication) -> Unit
+) {
     val scrollState = rememberScrollState()
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
@@ -53,58 +60,87 @@ fun MedicationSheet(showBottomSheet: MutableState<Boolean>) {
         onDismissRequest = { showBottomSheet.value = false },
         sheetState = sheetState,
 
-    ) {
-            Column(
-                Modifier
-                    .padding(horizontal = 16.dp)
-                    .fillMaxSize()
-                    .verticalScroll(scrollState),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                // Sheet content
-                Text(
-                    text = stringResource(id = R.string.medsheet_title),
-                    style = MaterialTheme.typography.headlineMedium,
-                )
+        ) {
 
-                InfoContent()
+        var medName by rememberSaveable { mutableStateOf("") }
+        var medType by rememberSaveable { mutableStateOf(TypeMedication.NONE) }
+        var medQuantity by rememberSaveable { mutableIntStateOf(0) }
 
-                Button(
-                    modifier = Modifier.padding(16.dp),
-                    onClick = {
-                        scope.launch { sheetState.hide() }.invokeOnCompletion {
-                            if (!sheetState.isVisible) {
-                                showBottomSheet.value = false
-                            }
-                        }
-                    },
-                    contentPadding = ButtonDefaults.ContentPadding
-                ) {
+        Column(
+            Modifier
+                .padding(horizontal = 16.dp)
+                .fillMaxSize()
+                .verticalScroll(scrollState),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            // Sheet content
+            Text(
+                text = stringResource(id = R.string.medsheet_title),
+                style = MaterialTheme.typography.headlineMedium,
+            )
 
-                    Icon(
-                        Icons.Filled.Done,
-                        contentDescription = stringResource(id = R.string.save)
+            InfoContent(
+                medName, { medName = it },
+                medType, { medType = it },
+                medQuantity, { medQuantity = it },
+            )
+
+            Button(
+                modifier = Modifier.padding(16.dp),
+                enabled = verifyFields(medName),
+                onClick = {
+                    addMedication(
+                        Medication(
+                            name = medName,
+                            type = medType,
+                            quantity = medQuantity
+                        )
                     )
-                    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                    Text(stringResource(id = R.string.save))
-                }
 
+                    scope.launch { sheetState.hide() }.invokeOnCompletion {
+                        if (!sheetState.isVisible) {
+                            showBottomSheet.value = false
+                        }
+                    }
+                },
+                contentPadding = ButtonDefaults.ContentPadding
+            ) {
 
+                Icon(
+                    Icons.Filled.Done,
+                    contentDescription = stringResource(id = R.string.save)
+                )
+                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                Text(stringResource(id = R.string.save))
             }
+
 
         }
 
+    }
 
+}
 
-
+fun verifyFields(medName: String): Boolean {
+    return when {
+        medName.isEmpty() -> false
+        else -> true
+    }
 }
 
 @Suppress("MagicNumber")
 @Composable
-fun InfoContent() {
+fun InfoContent(
+    medName: String,
+    medNameChange: (name: String) -> Unit,
+    medType: TypeMedication,
+    medTypeChange: (type: TypeMedication) -> Unit,
+    medQuantity: Int,
+    medQuantityChange: (quantity: Int) -> Unit,
+) {
     Column {
-        MainInfo()
+        MainInfo(medName,medNameChange, medType, medTypeChange, medQuantity, medQuantityChange)
 
         Divider(modifier = Modifier.padding(vertical = 16.dp))
 
@@ -117,15 +153,19 @@ fun InfoContent() {
 }
 
 @Composable
-private fun MainInfo() {
-    var medName by rememberSaveable { mutableStateOf("") }
-    var medType by rememberSaveable { mutableStateOf("Tipo") }
-    var medQuantity by rememberSaveable { mutableStateOf("") }
+private fun MainInfo(
+    medName: String,
+    medNameChange: (name: String) -> Unit,
+    medType: TypeMedication,
+    medTypeChange: (type: TypeMedication) -> Unit,
+    medQuantity: Int,
+    medQuantityChange: (quantity: Int) -> Unit,
+) {
 
     TextItem(
         label = stringResource(id = R.string.medsheet_medication),
         value = medName,
-        onChange = { medName = it }
+        onChange = { medNameChange(it) }
     )
 
     Row(
@@ -134,17 +174,17 @@ private fun MainInfo() {
         SelectorItem(
             modifier = Modifier.weight(1f),
             label = stringResource(id = R.string.medsheet_type),
-            options = arrayOf("Pill", "Drops", "Syringe"),
-            selectedIndex = 0,
-            onSelect = { medType = it.toString() }
+            options = TypeMedication.values().map { stringResource(id = it.label )}.toTypedArray(),
+            selectedIndex = medType.ordinal,
+            onSelect = { medTypeChange(TypeMedication.values()[it]) }
         )
 
         SelectorItem(
             modifier = Modifier.weight(1f),
             label = stringResource(id = R.string.medsheet_quantity),
-            options = arrayOf("1", "2", "3"),
-            selectedIndex = 0,
-            onSelect = { medQuantity = it.toString() }
+            options = getQuantityList(),
+            selectedIndex = medQuantity,
+            onSelect = { medQuantityChange(it) }
         )
     }
 }
@@ -205,6 +245,6 @@ private fun DoseDateDetail() {
 @Preview(showBackground = true)
 @Composable
 fun InfoContentPreview(){
-    InfoContent()
+//    InfoContent(medName, medType, medQuantity)
 }
 

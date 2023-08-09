@@ -4,7 +4,6 @@ import androidx.annotation.StringRes
 import com.leafwise.medapp.R
 
 data class Medication(
-    val uid: Int,
     val name: String,
     val type: TypeMedication,
     val quantity: Int,
@@ -12,6 +11,7 @@ data class Medication(
 
 
 enum class TypeMedication(@StringRes val label: Int) {
+    NONE(R.string.medsheet_type_none),
     PILL(R.string.medsheet_type_pill),
     INJECTION(R.string.medsheet_type_injection),
     SYRUP(R.string.medsheet_type_syrup),

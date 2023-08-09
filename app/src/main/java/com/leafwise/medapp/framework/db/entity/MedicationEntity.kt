@@ -1,20 +1,23 @@
 package com.leafwise.medapp.framework.db.entity
 
-import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import kotlinx.parcelize.Parcelize
+import com.leafwise.medapp.domain.model.Medication
+import com.leafwise.medapp.domain.model.TypeMedication
 
 @Entity(tableName = "medication")
-@Parcelize
 data class MedicationEntity(
     @ColumnInfo("uid")
-    @PrimaryKey val uid: Int,
+    @PrimaryKey(autoGenerate = true) val uid: Int = 0,
     @ColumnInfo("name")
     val name: String,
     @ColumnInfo("type")
     val type: Int,
     @ColumnInfo("quantity")
     val quantity: Int,
-) : Parcelable
+)
+
+fun List<MedicationEntity>.toMedicationModel() = map {
+    Medication(it.name, TypeMedication.values()[it.type], it.quantity)
+}
