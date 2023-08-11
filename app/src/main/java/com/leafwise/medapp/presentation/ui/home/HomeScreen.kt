@@ -1,6 +1,13 @@
 package com.leafwise.medapp.presentation.ui.home
 
+import android.content.Intent
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.os.Build
+import android.provider.Settings
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,7 +18,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
@@ -20,8 +30,10 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,7 +45,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberPermissionState
 import com.leafwise.medapp.R
 import com.leafwise.medapp.domain.model.Medication
 import com.leafwise.medapp.domain.model.TypeMedication
@@ -45,13 +61,14 @@ import com.leafwise.medapp.presentation.ui.medication.AddMedicationScreen
 import kotlinx.coroutines.launch
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Suppress("UnusedParameter")
 @Composable
 fun HomeScreen(
     uiState: HomeViewModel.HomeUiState,
-    onNavigateClick: () -> Unit
-) {
+    onAddClick: () -> Unit,
+    verifyPermissions: () -> Unit,
+    ) {
 
     val showBottomSheet = remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
@@ -67,9 +84,37 @@ fun HomeScreen(
         }
     )
 
+    // permission state
+    val notificationPermissionState = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        rememberPermissionState(
+            android.Manifest.permission.POST_NOTIFICATIONS
+        )
+    } else {
+        TODO("VERSION.SDK_INT < TIRAMISU")
+    }
+
+    //Verify permission
+    LaunchedEffect(Unit){
+        verifyPermissions()
+    }
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()) {
+        verifyPermissions()
+    }
+
+
     Scaffold(
         floatingActionButton = {
-            MedAddButton { showBottomSheet.value = true }
+            MedAddButton {
+                if(!notificationPermissionState.hasPermission){
+                    notificationPermissionState.launchPermissionRequest()
+                } else {
+                    onAddClick()
+                    showBottomSheet.value = true
+                }
+
+            }
         },
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState) { data ->
@@ -77,8 +122,7 @@ fun HomeScreen(
                     state = dismissSnackbarState,
                     background = {},
                     dismissContent = { Snackbar(snackbarData = data) },
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
         }
@@ -86,39 +130,39 @@ fun HomeScreen(
         Surface(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(innerPadding),
             color = MaterialTheme.colorScheme.background,
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
-            ) {
-
-                HomeHeader()
-
-                when (uiState) {
-                    is HomeViewModel.HomeUiState.Loading -> {
-                        LoadingIndicator(modifier = Modifier.fillMaxSize())
-                    }
-
-                    is HomeViewModel.HomeUiState.Success -> {
-                        HomeContent(listOf())
-                    }
-
-                    is HomeViewModel.HomeUiState.Empty -> {
-                        EmptyView()
-                    }
-
-                    is HomeViewModel.HomeUiState.Error -> {
-                        EmptyView()
-                    }
-                }
-
-            }
-
+            HomeContentComponent(uiState = uiState, launcher = launcher)
         }
     }
+}
+
+@Composable
+private fun HomeContentComponent(
+    uiState: HomeViewModel.HomeUiState,
+    launcher: ManagedActivityResultLauncher<Intent, ActivityResult>
+) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+    ) {
+        HomeHeader()
+
+        when (uiState) {
+            is HomeViewModel.HomeUiState.Loading ->
+                LoadingIndicator(modifier = Modifier.fillMaxSize())
+
+            is HomeViewModel.HomeUiState.Success ->
+                MedItems(listOf())
+
+            is HomeViewModel.HomeUiState.Empty ->
+                EmptyView()
+
+            is HomeViewModel.HomeUiState.Error ->
+                ErrorView(stringResource(id = uiState.message), launcher)
+        }
+    }
+
 }
 
 @Composable
@@ -147,11 +191,11 @@ fun HomeSheet(
     onSaveMedication: (message: String) -> Unit
 ) {
     if(showBottomSheet.value)
-    AddMedicationScreen(showBottomSheet, onSaveMedication)
+        AddMedicationScreen(showBottomSheet, onSaveMedication)
 }
 
 @Composable
-fun HomeContent(content: List<MedicationEntity>) {
+fun MedItems(content: List<MedicationEntity>) {
     LazyRow(
         modifier = Modifier
             .fillMaxWidth(),
@@ -167,6 +211,7 @@ fun HomeContent(content: List<MedicationEntity>) {
 @Composable
 fun EmptyView() {
     Box (modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+
         Text(
             text = stringResource(id = R.string.home_empty_view),
             style = MaterialTheme.typography.bodyMedium,
@@ -175,52 +220,115 @@ fun EmptyView() {
     }
 }
 
-@Preview
 @Composable
-fun HomeEmpty() {
-    HomeScreen(
-        HomeViewModel.HomeUiState.Empty,
-        {}
-    )
-}
+fun ErrorView(
+    message: String,
+    launcher: ManagedActivityResultLauncher<Intent, ActivityResult>,
+) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            Icons.Rounded.Warning,
+            tint = MaterialTheme.colorScheme.error,
+            contentDescription = "alertIcon",
+        )
 
-@Preview(uiMode = UI_MODE_NIGHT_YES)
-@Composable
-fun DarkHome() {
-    HomeScreen(
-        HomeViewModel.HomeUiState.Empty,
-        {}
-    )
-}
+        Text(
+            text = message,
+            style = MaterialTheme.typography.bodyLarge,
+        )
 
-@Preview
-@Composable
-fun HomeSuccess() {
-    HomeScreen(
-        HomeViewModel.HomeUiState.Success(
-            listOf(
-                Medication("Name", TypeMedication.CREAM, 2),
-                Medication("Name2", TypeMedication.AEROSOL_INHALER, 1)
-            )
-        ),
-        {}
-    )
-}
 
-@Preview
-@Composable
-fun HomeLoading() {
-    HomeScreen(
-        HomeViewModel.HomeUiState.Loading,
-        {}
-    )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            TextButton(
+                onClick = {
+                    launcher.launch(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
+                },
+                modifier = Modifier.padding(top = 8.dp)
+            ) {
+                Text(
+                    text = stringResource(id = R.string.home_error_button_text),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+        }
+
+    }
 }
 
 @Preview
 @Composable
-fun HomeError() {
+fun HomePreview(
+    @PreviewParameter(HomeUiStatePreviewParameterProvider::class)
+    uiState: HomeViewModel.HomeUiState,
+) {
     HomeScreen(
-        HomeViewModel.HomeUiState.Error(""),
-        {}
+        uiState = uiState,
+        onAddClick = {},
+        verifyPermissions = { true }
     )
 }
+
+class HomeUiStatePreviewParameterProvider :
+    PreviewParameterProvider<HomeViewModel.HomeUiState> {
+    override val values: Sequence<HomeViewModel.HomeUiState>
+        get() = sequenceOf(
+            HomeViewModel.HomeUiState.Empty,
+            HomeViewModel.HomeUiState.Loading,
+            HomeViewModel.HomeUiState.Success(
+                listOf(
+                    Medication("Name", TypeMedication.CREAM, 2),
+                    Medication("Name2", TypeMedication.AEROSOL_INHALER, 1)
+                )
+            ),
+            HomeViewModel.HomeUiState.Error(R.string.home_error_button_text)
+        )
+}
+//
+//@Preview(uiMode = UI_MODE_NIGHT_YES)
+//@Composable
+//fun DarkHome() {
+//    HomeScreen(
+//        uiState = HomeViewModel.HomeUiState.Empty,
+//        onAddClick = { },
+//        verifyPermissions = { true }
+//    )
+//}
+//
+//@Preview
+//@Composable
+//fun HomeSuccess() {
+//    HomeScreen(
+//        HomeViewModel.HomeUiState.Success(
+//            listOf(
+//                Medication("Name", TypeMedication.CREAM, 2),
+//                Medication("Name2", TypeMedication.AEROSOL_INHALER, 1)
+//            )
+//        ),
+//        onAddClick = { },
+//        verifyPermissions = { true }
+//    )
+//}
+//
+//@Preview
+//@Composable
+//fun HomeLoading() {
+//    HomeScreen(
+//        uiState = HomeViewModel.HomeUiState.Loading,
+//        onAddClick = { },
+//        verifyPermissions = { true }
+//    )
+//}
+//
+//@Preview
+//@Composable
+//fun HomeError() {
+//    HomeScreen(
+//        uiState = HomeViewModel.HomeUiState.Error(R.string.home_empty_view),
+//        onAddClick = { },
+//        verifyPermissions = { true }
+//    )
+//}

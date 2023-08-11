@@ -34,5 +34,10 @@ class RoomMedicationDataSource @Inject constructor(
         medicationDao.delete(medication.toMedicationEntity())
     }
 
-    private fun Medication.toMedicationEntity() = MedicationEntity(name = name, type = type.ordinal, quantity = quantity)
+    private fun Medication.toMedicationEntity() =
+        MedicationEntity(
+            name = name,
+            type = type.ordinal,
+            quantity = quantity
+        )
 }
