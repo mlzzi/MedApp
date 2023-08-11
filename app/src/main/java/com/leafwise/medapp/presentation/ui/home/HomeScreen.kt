@@ -11,14 +11,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
+import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -28,13 +35,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.leafwise.medapp.R
+import com.leafwise.medapp.domain.model.Medication
+import com.leafwise.medapp.domain.model.TypeMedication
 import com.leafwise.medapp.framework.db.entity.MedicationEntity
 import com.leafwise.medapp.presentation.components.LoadingIndicator
 import com.leafwise.medapp.presentation.components.MedAddButton
 import com.leafwise.medapp.presentation.components.MedItem
-import com.leafwise.medapp.presentation.ui.medication.MedicationSheet
+import com.leafwise.medapp.presentation.ui.medication.AddMedicationScreen
+import kotlinx.coroutines.launch
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Suppress("UnusedParameter")
 @Composable
 fun HomeScreen(
@@ -43,11 +54,34 @@ fun HomeScreen(
 ) {
 
     val showBottomSheet = remember { mutableStateOf(false) }
-    HomeSheet(showBottomSheet)
+    val snackbarHostState = remember { SnackbarHostState() }
+    val dismissSnackbarState = rememberDismissState()
+    val scope = rememberCoroutineScope()
+
+    HomeSheet(
+        showBottomSheet = showBottomSheet,
+        onSaveMedication = {
+            scope.launch {
+                snackbarHostState.showSnackbar(message = it)
+            }
+        }
+    )
+
     Scaffold(
         floatingActionButton = {
             MedAddButton { showBottomSheet.value = true }
         },
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState) { data ->
+                SwipeToDismiss(
+                    state = dismissSnackbarState,
+                    background = {},
+                    dismissContent = { Snackbar(snackbarData = data) },
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                )
+            }
+        }
     ) { innerPadding ->
         Surface(
             modifier = Modifier
@@ -108,8 +142,12 @@ fun HomeHeader() {
 }
 
 @Composable
-fun HomeSheet(showBottomSheet: MutableState<Boolean>) {
-    if(showBottomSheet.value) MedicationSheet(showBottomSheet)
+fun HomeSheet(
+    showBottomSheet: MutableState<Boolean>,
+    onSaveMedication: (message: String) -> Unit
+) {
+    if(showBottomSheet.value)
+    AddMedicationScreen(showBottomSheet, onSaveMedication)
 }
 
 @Composable
@@ -160,7 +198,10 @@ fun DarkHome() {
 fun HomeSuccess() {
     HomeScreen(
         HomeViewModel.HomeUiState.Success(
-            listOf(MedicationEntity(1), MedicationEntity(2))
+            listOf(
+                Medication("Name", TypeMedication.CREAM, 2),
+                Medication("Name2", TypeMedication.AEROSOL_INHALER, 1)
+            )
         ),
         {}
     )

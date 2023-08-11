@@ -4,10 +4,11 @@ import java.io.FileInputStream
 plugins {
     id("com.android.application")
     kotlin("android")
+    kotlin("kapt")
+    id("kotlin-parcelize")
     id("kotlin-android")
     id("dagger.hilt.android.plugin")
     id("com.google.devtools.ksp")
-    kotlin("kapt")
 }
 
 apply(from = "../config/detekt/detekt.gradle")

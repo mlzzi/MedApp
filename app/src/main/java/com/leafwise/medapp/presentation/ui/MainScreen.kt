@@ -1,4 +1,4 @@
-package com.leafwise.medapp.presentation
+package com.leafwise.medapp.presentation.ui
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold

@@ -11,7 +11,6 @@ import com.leafwise.medapp.framework.db.entity.MedicationEntity
     //When first migration is needed, set exportSchema to true
     exportSchema = false
 )
-
 abstract class AppDatabase : RoomDatabase() {
     abstract fun medicationDao(): MedicationDao
 }
