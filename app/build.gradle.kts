@@ -4,11 +4,12 @@ import java.io.FileInputStream
 plugins {
     id("com.android.application")
     kotlin("android")
+    kotlin("kapt")
+    id("kotlin-parcelize")
     id("kotlin-android")
     id("dagger.hilt.android.plugin")
     id("com.google.devtools.ksp")
     id("com.google.gms.google-services")
-    kotlin("kapt")
 }
 
 apply(from = "../config/detekt/detekt.gradle")
@@ -20,7 +21,7 @@ keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 
 android {
     namespace = "com.leafwise.medapp"
-    compileSdk = 33
+    compileSdk = 34
 
     signingConfigs {
         create("release") {
@@ -34,7 +35,7 @@ android {
     defaultConfig {
         applicationId = "com.leafwise.medapp"
         minSdk = 26
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -109,7 +110,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
     implementation(composeBom)
-    implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material3:material3:1.2.0-alpha03")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.navigation:navigation-compose:${LibVersion.navigationCompose}")
 

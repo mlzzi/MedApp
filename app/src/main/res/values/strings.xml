@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">MedApp</string>
     <string name="deep_link_host" translatable="false">medapp.com</string>
+    <string name="select_date_confirm_label">Schedule</string>
+    <string name="select_date_time_picker_title">Select time</string>
 
 <!--    Home-->
     <string name="home_empty_view">There is no meds registered! Tell me about the ones you need and we will take care!</string>
@@ -26,4 +28,27 @@
     <string name="alarm_notification_channel_name">Alarm reminder</string>
     <string name="alarm_notification_channel_description">Don\'t forget to take your meds</string>
     <string name="alarm_notification_group_summary">%1$d meds to take</string>
+
+<!--    MedSheet-->
+    <string name="medsheet_medication">Medication</string>
+    <string name="medsheet_type">Type</string>
+    <string name="medsheet_quantity">Quantity</string>
+    <string name="medsheet_title">Add medication</string>
+    <string name="medsheet_frequency">Frequency</string>
+    <string name="medsheet_how_many_times">How many times per day</string>
+    <string name="medsheet_how_many_days">How many days</string>
+    <string name="medsheet_dose">Dose 1</string>
+<!--    Type medication labels-->
+    <string name="medsheet_type_none">None</string>
+    <string name="medsheet_type_pill">Pill</string>
+    <string name="medsheet_type_injection">Injection</string>
+    <string name="medsheet_type_syrup">Syrup</string>
+    <string name="medsheet_type_suppository">Suppository</string>
+    <string name="medsheet_type_cream">Cream</string>
+    <string name="medsheet_type_transdermal_patch">Transdermal patch</string>
+    <string name="medsheet_type_ophthalmic_drops">Ophthalmic drops</string>
+    <string name="medsheet_type_aerosol_inhaler">Aerosol/Inhaler</string>
+    <string name="medsheet_type_long_acting_injectable">Long-acting injectable</string>
+    <string name="medication_added">The medication has been successfully added!</string>
+    <string name="some_unknown_error">Some unknown error occurred.</string>
 </resources>

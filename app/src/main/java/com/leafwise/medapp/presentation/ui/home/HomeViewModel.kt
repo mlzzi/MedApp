@@ -9,6 +9,8 @@ import com.leafwise.medapp.framework.db.entity.MedicationEntity
 import com.leafwise.medapp.util.AlarmUtil
 import com.leafwise.medapp.util.Permissions
 import dagger.hilt.android.lifecycle.HiltViewModel
+import com.leafwise.medapp.domain.model.Medication
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -49,7 +51,7 @@ class HomeViewModel @Inject constructor(
     sealed class HomeUiState {
         object Empty : HomeUiState()
         object Loading : HomeUiState()
-        class Success(val data: List<MedicationEntity>) : HomeUiState()
-        class Error(@StringRes val message: Int) : HomeUiState()
+        class Success(val data: List<Medication>) : HomeUiState()
+        class Error(@StringRes val message: String) : HomeUiState()
     }
 }
