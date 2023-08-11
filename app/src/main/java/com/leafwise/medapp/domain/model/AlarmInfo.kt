@@ -30,6 +30,7 @@ data class AlarmInfo(
     }
 }
 
+@Suppress("MagicNumber")
 enum class AlarmInterval(private val intervalMillis: Long, private val displayNameResId: Int) {
     EVERY_MINUTES(AlarmManager.INTERVAL_FIFTEEN_MINUTES / 15, R.string.every_12_hours),
     EVERY_HOUR(AlarmManager.INTERVAL_HOUR, R.string.every_hour),

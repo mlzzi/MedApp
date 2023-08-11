@@ -44,11 +44,11 @@ class Permissions @Inject constructor(
         }
     }
 
-    companion object {
-        // Notification permission request code
-        private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 1001
-        // Alarm permission request code
-        private const val ALARM_PERMISSION_REQUEST_CODE = 1002
-    }
+//    companion object {
+//        // Notification permission request code
+//        private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 1001
+//        // Alarm permission request code
+//        private const val ALARM_PERMISSION_REQUEST_CODE = 1002
+//    }
 
 }

@@ -8,7 +8,6 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,9 +18,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Warning
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -31,8 +30,8 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberDismissState
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -46,11 +45,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import com.leafwise.medapp.R
-import com.leafwise.medapp.domain.model.AlarmInfo
 import com.leafwise.medapp.domain.model.Medication
 import com.leafwise.medapp.domain.model.TypeMedication
 import com.leafwise.medapp.framework.db.entity.MedicationEntity
@@ -61,9 +61,7 @@ import com.leafwise.medapp.presentation.ui.medication.AddMedicationScreen
 import kotlinx.coroutines.launch
 
 
-@OptIn(ExperimentalMaterial3Api::class)
-
-
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Suppress("UnusedParameter")
 @Composable
 fun HomeScreen(
@@ -124,8 +122,7 @@ fun HomeScreen(
                     state = dismissSnackbarState,
                     background = {},
                     dismissContent = { Snackbar(snackbarData = data) },
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
         }
@@ -133,41 +130,39 @@ fun HomeScreen(
         Surface(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(innerPadding),
             color = MaterialTheme.colorScheme.background,
         ) {
-
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
-            ) {
-
-                HomeHeader()
-
-                when (uiState) {
-                    is HomeViewModel.HomeUiState.Loading -> {
-                        LoadingIndicator(modifier = Modifier.fillMaxSize())
-                    }
-
-                    is HomeViewModel.HomeUiState.Success -> {
-                        HomeContent(listOf())
-                    }
-
-                    is HomeViewModel.HomeUiState.Empty -> {
-                        EmptyView()
-                    }
-
-                    is HomeViewModel.HomeUiState.Error -> {
-                        ErrorView(stringResource(id = uiState.message), launcher)
-                    }
-                }
-
-            }
-
+            HomeContentComponent(uiState = uiState, launcher = launcher)
         }
     }
+}
+
+@Composable
+private fun HomeContentComponent(
+    uiState: HomeViewModel.HomeUiState,
+    launcher: ManagedActivityResultLauncher<Intent, ActivityResult>
+) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+    ) {
+        HomeHeader()
+
+        when (uiState) {
+            is HomeViewModel.HomeUiState.Loading ->
+                LoadingIndicator(modifier = Modifier.fillMaxSize())
+
+            is HomeViewModel.HomeUiState.Success ->
+                MedItems(listOf())
+
+            is HomeViewModel.HomeUiState.Empty ->
+                EmptyView()
+
+            is HomeViewModel.HomeUiState.Error ->
+                ErrorView(stringResource(id = uiState.message), launcher)
+        }
+    }
+
 }
 
 @Composable
@@ -196,11 +191,11 @@ fun HomeSheet(
     onSaveMedication: (message: String) -> Unit
 ) {
     if(showBottomSheet.value)
-    AddMedicationScreen(showBottomSheet, onSaveMedication)
+        AddMedicationScreen(showBottomSheet, onSaveMedication)
 }
 
 @Composable
-fun HomeContent(content: List<MedicationEntity>) {
+fun MedItems(content: List<MedicationEntity>) {
     LazyRow(
         modifier = Modifier
             .fillMaxWidth(),
@@ -266,55 +261,74 @@ fun ErrorView(
 
 @Preview
 @Composable
-fun HomeEmpty() {
+fun HomePreview(
+    @PreviewParameter(HomeUiStatePreviewParameterProvider::class)
+    uiState: HomeViewModel.HomeUiState,
+) {
     HomeScreen(
-        uiState = HomeViewModel.HomeUiState.Empty,
-        onAddClick = {  },
+        uiState = uiState,
+        onAddClick = {},
         verifyPermissions = { true }
     )
 }
 
-@Preview(uiMode = UI_MODE_NIGHT_YES)
-@Composable
-fun DarkHome() {
-    HomeScreen(
-        uiState = HomeViewModel.HomeUiState.Empty,
-        onAddClick = { },
-        verifyPermissions = { true }
-    )
+class HomeUiStatePreviewParameterProvider :
+    PreviewParameterProvider<HomeViewModel.HomeUiState> {
+    override val values: Sequence<HomeViewModel.HomeUiState>
+        get() = sequenceOf(
+            HomeViewModel.HomeUiState.Empty,
+            HomeViewModel.HomeUiState.Loading,
+            HomeViewModel.HomeUiState.Success(
+                listOf(
+                    Medication("Name", TypeMedication.CREAM, 2),
+                    Medication("Name2", TypeMedication.AEROSOL_INHALER, 1)
+                )
+            ),
+            HomeViewModel.HomeUiState.Error(R.string.home_error_button_text)
+        )
 }
-
-@Preview
-@Composable
-fun HomeSuccess() {
-    HomeScreen(
-        HomeViewModel.HomeUiState.Success(
-            listOf(
-                Medication("Name", TypeMedication.CREAM, 2),
-                Medication("Name2", TypeMedication.AEROSOL_INHALER, 1)
-            )
-        ),
-        onAddClick = { },
-        verifyPermissions = { true }
-    )
-}
-
-@Preview
-@Composable
-fun HomeLoading() {
-    HomeScreen(
-        uiState = HomeViewModel.HomeUiState.Loading,
-        onAddClick = { },
-        verifyPermissions = { true }
-    )
-}
-
-@Preview
-@Composable
-fun HomeError() {
-    HomeScreen(
-        uiState = HomeViewModel.HomeUiState.Error(R.string.home_empty_view),
-        onAddClick = { },
-        verifyPermissions = { true }
-    )
-}
+//
+//@Preview(uiMode = UI_MODE_NIGHT_YES)
+//@Composable
+//fun DarkHome() {
+//    HomeScreen(
+//        uiState = HomeViewModel.HomeUiState.Empty,
+//        onAddClick = { },
+//        verifyPermissions = { true }
+//    )
+//}
+//
+//@Preview
+//@Composable
+//fun HomeSuccess() {
+//    HomeScreen(
+//        HomeViewModel.HomeUiState.Success(
+//            listOf(
+//                Medication("Name", TypeMedication.CREAM, 2),
+//                Medication("Name2", TypeMedication.AEROSOL_INHALER, 1)
+//            )
+//        ),
+//        onAddClick = { },
+//        verifyPermissions = { true }
+//    )
+//}
+//
+//@Preview
+//@Composable
+//fun HomeLoading() {
+//    HomeScreen(
+//        uiState = HomeViewModel.HomeUiState.Loading,
+//        onAddClick = { },
+//        verifyPermissions = { true }
+//    )
+//}
+//
+//@Preview
+//@Composable
+//fun HomeError() {
+//    HomeScreen(
+//        uiState = HomeViewModel.HomeUiState.Error(R.string.home_empty_view),
+//        onAddClick = { },
+//        verifyPermissions = { true }
+//    )
+//}

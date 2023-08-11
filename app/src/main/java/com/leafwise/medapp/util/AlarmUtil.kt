@@ -37,9 +37,9 @@ class AlarmUtil @Inject constructor(
     }
 
     //TODO
-    fun rescheduleAlarm(){
-
-    }
+//    fun rescheduleAlarm(){
+//
+//    }
 
     private fun Context.makeAlarmPendingIntent(alarmKey: Int): PendingIntent {
         val intent = Intent(context, AlarmReceiver::class.java).apply {

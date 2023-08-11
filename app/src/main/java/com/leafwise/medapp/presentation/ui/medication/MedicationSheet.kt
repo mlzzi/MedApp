@@ -23,7 +23,6 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -39,7 +38,7 @@ import com.leafwise.medapp.domain.model.TypeMedication
 import com.leafwise.medapp.presentation.components.SelectDateItem
 import com.leafwise.medapp.presentation.components.SelectorItem
 import com.leafwise.medapp.presentation.components.TextItem
-import com.leafwise.medapp.util.extensions.getQuantityList
+import com.leafwise.medapp.util.extensions.ListGenerator.generateQuantityList
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
@@ -64,7 +63,7 @@ fun MedicationSheet(
 
         var medName by rememberSaveable { mutableStateOf("") }
         var medType by rememberSaveable { mutableStateOf(TypeMedication.NONE) }
-        var medQuantity by rememberSaveable { mutableIntStateOf(0) }
+        var medQuantity by rememberSaveable { mutableStateOf(0) }
 
         Column(
             Modifier
@@ -182,7 +181,7 @@ private fun MainInfo(
         SelectorItem(
             modifier = Modifier.weight(1f),
             label = stringResource(id = R.string.medsheet_quantity),
-            options = getQuantityList(),
+            options = generateQuantityList(50),
             selectedIndex = medQuantity,
             onSelect = { medQuantityChange(it) }
         )

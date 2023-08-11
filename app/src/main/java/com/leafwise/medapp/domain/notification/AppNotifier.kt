@@ -19,10 +19,10 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
-private const val MAX_NUM_NOTIFICATIONS = 5
+//private const val MAX_NUM_NOTIFICATIONS = 5
 private const val TARGET_ACTIVITY_NAME = "com.leafwise.medapp.MainActivity"
 private const val ALARM_NOTIFICATION_REQUEST_CODE = 0
-private const val ALARM_NOTIFICATION_SUMMARY_ID = 1
+//private const val ALARM_NOTIFICATION_SUMMARY_ID = 1
 private const val ALARM_NOTIFICATION_CHANNEL_ID = ""
 private const val ALARM_NOTIFICATION_GROUP = "ALARM_NOTIFICATIONS"
 private const val DEEP_LINK_SCHEME_AND_HOST = "https://medapp.com"
@@ -45,7 +45,7 @@ class AppNotifier @Inject constructor(
                 setSmallIcon(R.drawable.ic_pill)
                     .setContentTitle(notificationData.title)
                     .setContentText(notificationData.content)
-                    .setContentIntent(alarmPendingIntent(notificationData))
+                    .setContentIntent(alarmPendingIntent())
                     .setGroup(ALARM_NOTIFICATION_GROUP)
                     .setAutoCancel(true)
             }
@@ -103,7 +103,7 @@ private fun Context.ensureNotificationChannelExists() {
 }
 
 private fun Context.alarmPendingIntent(
-    notificationData: NotificationData,
+    //notificationData: NotificationData,
 ): PendingIntent? = PendingIntent.getActivity(
     this,
     ALARM_NOTIFICATION_REQUEST_CODE,

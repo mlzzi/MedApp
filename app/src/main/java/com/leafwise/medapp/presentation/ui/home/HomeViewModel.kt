@@ -1,15 +1,12 @@
 package com.leafwise.medapp.presentation.ui.home
 
-import android.app.AlarmManager
 import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import com.leafwise.medapp.R
 import com.leafwise.medapp.domain.model.AlarmInfo.Companion.TEST_ALARM
-import com.leafwise.medapp.framework.db.entity.MedicationEntity
+import com.leafwise.medapp.domain.model.Medication
 import com.leafwise.medapp.util.AlarmUtil
 import com.leafwise.medapp.util.Permissions
-import dagger.hilt.android.lifecycle.HiltViewModel
-import com.leafwise.medapp.domain.model.Medication
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -39,9 +36,9 @@ class HomeViewModel @Inject constructor(
 
         }
     }
-    fun addMedication()  {
-
-    }
+//    fun addMedication()  {
+//
+//    }
 
     fun scheduleAlarm(){
         alarmUtil.scheduleExactAlarm(TEST_ALARM)
@@ -52,6 +49,6 @@ class HomeViewModel @Inject constructor(
         object Empty : HomeUiState()
         object Loading : HomeUiState()
         class Success(val data: List<Medication>) : HomeUiState()
-        class Error(@StringRes val message: String) : HomeUiState()
+        class Error(@StringRes val message: Int) : HomeUiState()
     }
 }
