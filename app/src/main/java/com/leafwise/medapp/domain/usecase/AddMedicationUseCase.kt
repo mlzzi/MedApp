@@ -1,8 +1,8 @@
 package com.leafwise.medapp.domain.usecase
 
 import com.leafwise.medapp.data.repository.MedicationRepository
-import com.leafwise.medapp.domain.model.Medication
-import com.leafwise.medapp.domain.model.TypeMedication
+import com.leafwise.medapp.domain.model.meds.Medication
+import com.leafwise.medapp.domain.model.meds.TypeMedication
 import com.leafwise.medapp.domain.usecase.base.CoroutinesDispatchers
 import com.leafwise.medapp.domain.usecase.base.ResultStatus
 import com.leafwise.medapp.domain.usecase.base.UseCase

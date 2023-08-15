@@ -3,8 +3,8 @@ package com.leafwise.medapp.framework.db.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.leafwise.medapp.domain.model.Medication
-import com.leafwise.medapp.domain.model.TypeMedication
+import com.leafwise.medapp.domain.model.meds.Medication
+import com.leafwise.medapp.domain.model.meds.TypeMedication
 
 @Entity(tableName = "medication")
 data class MedicationEntity(
