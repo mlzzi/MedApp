@@ -38,6 +38,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.leafwise.medapp.R
+import com.leafwise.medapp.domain.model.AlarmInterval
 import com.leafwise.medapp.domain.model.meds.EditMedication
 import com.leafwise.medapp.domain.model.meds.TypeMedication
 import com.leafwise.medapp.presentation.components.SelectDateItem
@@ -89,7 +90,7 @@ fun MedicationSheet(
             }
 
             item {
-                DateInfo()
+                DateInfo(med, onUpdateMed)
                 Divider(modifier = Modifier.padding(vertical = Dimens.MediumPadding.size))
             }
 
@@ -175,16 +176,18 @@ private fun MainInfo(
 }
 
 @Composable
-private fun DateInfo() {
-    var medFrequency by rememberSaveable { mutableStateOf("") }
-    var medHowManyTimes by rememberSaveable { mutableStateOf("") }
-    var medHowManyDays by rememberSaveable { mutableStateOf("") }
+private fun DateInfo(
+    med: EditMedication,
+    onUpdateMed: (medication: EditMedication) -> Unit,
+) {
 
+
+    val medFrequency by remember(med.frequency) { mutableStateOf(med.frequency) }
     SelectorItem(
         label = stringResource(id = R.string.medsheet_frequency),
-        options = arrayOf("every 12 hours", "daily", "weekly"),
-        selectedIndex = 0,
-        onSelect = { medFrequency = it.toString() }
+        options = AlarmInterval.values().map { stringResource(id = it.getStringRes()) }.toTypedArray(),
+        selectedIndex = medFrequency.ordinal,
+        onSelect = { onUpdateMed(med.copy(frequency = AlarmInterval.values()[it])) }
     )
 
     Spacer(modifier = Modifier.size(Dimens.SmallPadding.size))
@@ -192,20 +195,22 @@ private fun DateInfo() {
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
+        val medHowManyTimes by remember(med.howManyTimes) { mutableIntStateOf(med.howManyTimes) }
         SelectorItem(
             modifier = Modifier.weight(1f),
             label = stringResource(id = R.string.medsheet_how_many_times),
-            options = arrayOf("1", "2", "3", "4"),
-            selectedIndex = 0,
-            onSelect = { medHowManyTimes = it.toString() }
+            options = generateQuantityList(7),
+            selectedIndex = medHowManyTimes,
+            onSelect = { onUpdateMed(med.copy(howManyTimes = it)) }
         )
 
+        val medHowManyDays by remember(med.howManyDays) { mutableIntStateOf(med.howManyDays) }
         SelectorItem(
             modifier = Modifier.weight(1f),
             label = stringResource(id = R.string.medsheet_how_many_days),
             options = arrayOf("1", "2", "3", "4"),
-            selectedIndex = 0,
-            onSelect = { medHowManyDays = it.toString() }
+            selectedIndex = medHowManyDays,
+            onSelect = { onUpdateMed(med.copy(howManyDays = it)) }
         )
     }
 }

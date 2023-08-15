@@ -31,7 +31,7 @@ data class AlarmInfo(
 }
 
 @Suppress("MagicNumber")
-enum class AlarmInterval(private val intervalMillis: Long, private val displayNameResId: Int) {
+enum class AlarmInterval(private val intervalMillis: Long, private val resId: Int) {
     EVERY_MINUTES(AlarmManager.INTERVAL_FIFTEEN_MINUTES / 15, R.string.every_12_hours),
     EVERY_HOUR(AlarmManager.INTERVAL_HOUR, R.string.every_hour),
     EVERY_2_HOURS(AlarmManager.INTERVAL_HOUR * 2, R.string.every_2_hours),
@@ -45,5 +45,5 @@ enum class AlarmInterval(private val intervalMillis: Long, private val displayNa
 
     fun getIntervalMillis(): Long = intervalMillis
 
-    fun getDisplayName(context: Context): String = context.getString(displayNameResId)
+    fun getStringRes(): Int = resId
 }

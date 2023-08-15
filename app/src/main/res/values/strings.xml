@@ -24,6 +24,22 @@
     <string name="every_2_days">Every 2 days</string>
     <string name="weekly">Weekly</string>
 
+    <!-- Alarm Days -->
+    <plurals name="days">
+        <item quantity="one">%d day</item>
+        <item quantity="many">%d days</item>
+    </plurals>
+
+    <plurals name="months">
+        <item quantity="one">Durante %d mês</item>
+        <item quantity="other">During %d meses</item>
+    </plurals>
+
+    <plurals name="years">
+        <item quantity="one">Durante %d ano</item>
+        <item quantity="other">During %d anos</item>
+    </plurals>
+
     <!--    Notifications-->
     <string name="alarm_notification_channel_name">Alarm reminder</string>
     <string name="alarm_notification_channel_description">Don\'t forget to take your meds</string>
