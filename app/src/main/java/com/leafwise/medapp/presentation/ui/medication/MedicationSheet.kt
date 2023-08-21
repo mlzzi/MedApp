@@ -1,7 +1,6 @@
 package com.leafwise.medapp.presentation.ui.medication
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,8 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Button
@@ -32,8 +29,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,6 +43,7 @@ import com.leafwise.medapp.presentation.components.SelectorItem
 import com.leafwise.medapp.presentation.components.TextItem
 import com.leafwise.medapp.presentation.theme.Dimens
 import com.leafwise.medapp.util.extensions.ListGenerator.generateQuantityList
+import com.leafwise.medapp.util.extensions.ListGenerator.generateWeekdaysList
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
@@ -69,6 +67,9 @@ fun MedicationSheet(
 
         ) {
 
+        val medDoses by remember(med.doses) { mutableStateOf(med.doses) }
+        val firstOccurrence by remember(med.firstOccurrence) { mutableStateOf(med.firstOccurrence) }
+
         LazyColumn(
             modifier = Modifier
                 .padding(horizontal = Dimens.MediumPadding.size)
@@ -90,7 +91,7 @@ fun MedicationSheet(
             }
 
             item {
-                DateInfo(med, onUpdateMed)
+                DateInfo(med, medDoses, firstOccurrence, onUpdateMed)
                 Divider(modifier = Modifier.padding(vertical = Dimens.MediumPadding.size))
             }
 
@@ -178,6 +179,8 @@ private fun MainInfo(
 @Composable
 private fun DateInfo(
     med: EditMedication,
+    medDoses: List<Calendar>,
+    firstOccurrence: Calendar,
     onUpdateMed: (medication: EditMedication) -> Unit,
 ) {
 
@@ -192,26 +195,53 @@ private fun DateInfo(
 
     Spacer(modifier = Modifier.size(Dimens.SmallPadding.size))
 
+
+
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         val medHowManyTimes by remember(med.howManyTimes) { mutableIntStateOf(med.howManyTimes) }
-        SelectorItem(
-            modifier = Modifier.weight(1f),
-            label = stringResource(id = R.string.medsheet_how_many_times),
-            options = generateQuantityList(7),
-            selectedIndex = medHowManyTimes,
-            onSelect = { onUpdateMed(med.copy(howManyTimes = it)) }
-        )
 
-        val medHowManyDays by remember(med.howManyDays) { mutableIntStateOf(med.howManyDays) }
-        SelectorItem(
-            modifier = Modifier.weight(1f),
-            label = stringResource(id = R.string.medsheet_how_many_days),
-            options = arrayOf("1", "2", "3", "4"),
-            selectedIndex = medHowManyDays,
-            onSelect = { onUpdateMed(med.copy(howManyDays = it)) }
-        )
+        if(medFrequency < AlarmInterval.DAILY){
+            SelectDateItem(
+                label = stringResource(id = R.string.medsheet_starting_at),
+                value = if(medDoses.isNotEmpty()) medDoses.first() else Calendar.getInstance(),
+                onValueChange = {
+                    onUpdateMed(med.copy(doses = listOf(it)))
+                }
+            )
+        } else if (medFrequency == AlarmInterval.WEEKLY){
+            var dayOfWeek by rememberSaveable { mutableIntStateOf(0) }
+
+            SelectorItem(
+                label = stringResource(id = R.string.medsheet_day_of_week),
+                options = LocalContext.current.generateWeekdaysList().toTypedArray(),
+                selectedIndex = dayOfWeek,
+                onSelect = {
+                    dayOfWeek = it
+                    val updatedDate = firstOccurrence.clone() as Calendar
+                    updatedDate.set(Calendar.DAY_OF_WEEK, dayOfWeek)
+                    onUpdateMed(med.copy(firstOccurrence = updatedDate))
+                }
+            )
+        } else {
+            SelectorItem(
+                label = stringResource(id = R.string.medsheet_how_many_times),
+                options = generateQuantityList(7),
+                selectedIndex = medHowManyTimes,
+                onSelect = { onUpdateMed(med.copy(howManyTimes = it)) }
+            )
+        }
+
+
+//        val medFinalTriggerDate by remember(med.finalTriggerDate) { mutableStateOf(med.finalTriggerDate) }
+//        SelectorItem(
+//            modifier = Modifier.weight(1f),
+//            label = stringResource(id = R.string.medsheet_how_many_days),
+//            options = arrayOf("1", "2", "3", "4"),
+//            selectedIndex = medFinalTriggerDate,
+//            onSelect = { onUpdateMed(med.copy(finalTriggerDate = it)) }
+//        )
     }
 }
 

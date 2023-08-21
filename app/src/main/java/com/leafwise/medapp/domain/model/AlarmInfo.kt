@@ -1,7 +1,6 @@
 package com.leafwise.medapp.domain.model
 
 import android.app.AlarmManager
-import android.content.Context
 import com.leafwise.medapp.R
 import java.util.Calendar
 
@@ -22,7 +21,7 @@ data class AlarmInfo(
             time = "12:00",
             title = "Dorflex",
             description = "Take your medication",
-            interval = AlarmInterval.EVERY_MINUTES,
+            interval = AlarmInterval.EVERY_HOUR,
             firstOccurrence = Calendar.getInstance().apply {
                 add(Calendar.SECOND, 20)
             }
@@ -32,7 +31,6 @@ data class AlarmInfo(
 
 @Suppress("MagicNumber")
 enum class AlarmInterval(private val intervalMillis: Long, private val resId: Int) {
-    EVERY_MINUTES(AlarmManager.INTERVAL_FIFTEEN_MINUTES / 15, R.string.every_12_hours),
     EVERY_HOUR(AlarmManager.INTERVAL_HOUR, R.string.every_hour),
     EVERY_2_HOURS(AlarmManager.INTERVAL_HOUR * 2, R.string.every_2_hours),
     EVERY_3_HOURS(AlarmManager.INTERVAL_HOUR * 3, R.string.every_3_hours),

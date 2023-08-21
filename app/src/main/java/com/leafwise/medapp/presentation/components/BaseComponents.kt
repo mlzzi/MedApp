@@ -99,7 +99,7 @@ fun SelectDateItem(
     modifier: Modifier = Modifier,
     label: String,
     value: Calendar,
-    onValueChange: (String) -> Unit,
+    onValueChange: (Calendar) -> Unit,
 ) {
 
     val locale = LocalContext.current.getCurrentLocale()
@@ -115,9 +115,7 @@ fun SelectDateItem(
                 datePickerDialog.value = it.isFocused
             },
         value = timePicker.value.toHourFormat(locale),
-        onValueChange = {
-            onValueChange(it)
-        },
+        onValueChange = {},
         label = { Text(text = label) },
         readOnly = true,
         trailingIcon = {
@@ -136,6 +134,7 @@ fun SelectDateItem(
             onDismissRequest = { datePickerDialog.value = false },
             onTimeChanged = {
                 timePicker.value = it
+                onValueChange(it)
             },
             selectedTime = timePicker.value,
             confirmLabel = stringResource(id = R.string.select_date_confirm_label),
