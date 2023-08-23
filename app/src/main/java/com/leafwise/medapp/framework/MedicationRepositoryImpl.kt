@@ -2,7 +2,7 @@ package com.leafwise.medapp.framework
 
 import com.leafwise.medapp.data.repository.MedicationLocalDataSource
 import com.leafwise.medapp.data.repository.MedicationRepository
-import com.leafwise.medapp.domain.model.Medication
+import com.leafwise.medapp.domain.model.meds.Medication
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

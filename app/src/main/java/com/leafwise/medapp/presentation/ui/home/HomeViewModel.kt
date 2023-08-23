@@ -4,7 +4,7 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import com.leafwise.medapp.R
 import com.leafwise.medapp.domain.model.AlarmInfo.Companion.TEST_ALARM
-import com.leafwise.medapp.domain.model.Medication
+import com.leafwise.medapp.domain.model.meds.Medication
 import com.leafwise.medapp.util.AlarmUtil
 import com.leafwise.medapp.util.Permissions
 import dagger.hilt.android.lifecycle.HiltViewModel

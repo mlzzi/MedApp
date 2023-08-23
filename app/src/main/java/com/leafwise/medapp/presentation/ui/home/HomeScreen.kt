@@ -1,7 +1,6 @@
 package com.leafwise.medapp.presentation.ui.home
 
 import android.content.Intent
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.os.Build
 import android.provider.Settings
 import androidx.activity.compose.ManagedActivityResultLauncher
@@ -34,7 +33,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -48,16 +46,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import com.leafwise.medapp.R
-import com.leafwise.medapp.domain.model.Medication
-import com.leafwise.medapp.domain.model.TypeMedication
+import com.leafwise.medapp.domain.model.meds.Medication
+import com.leafwise.medapp.domain.model.meds.TypeMedication
 import com.leafwise.medapp.framework.db.entity.MedicationEntity
 import com.leafwise.medapp.presentation.components.LoadingIndicator
 import com.leafwise.medapp.presentation.components.MedAddButton
 import com.leafwise.medapp.presentation.components.MedItem
-import com.leafwise.medapp.presentation.ui.medication.AddMedicationScreen
+import com.leafwise.medapp.presentation.ui.medication.AddEditMedicationScreen
+import com.leafwise.medapp.presentation.ui.medication.AddEditMedicationViewModel
 import kotlinx.coroutines.launch
 
 
@@ -75,14 +76,17 @@ fun HomeScreen(
     val dismissSnackbarState = rememberDismissState()
     val scope = rememberCoroutineScope()
 
-    HomeSheet(
-        showBottomSheet = showBottomSheet,
-        onSaveMedication = {
-            scope.launch {
-                snackbarHostState.showSnackbar(message = it)
+    if(showBottomSheet.value){
+        AddEditMedicationScreen(
+            isEdit = true,
+            showBottomSheet = showBottomSheet,
+            onSaveMedication = {
+                scope.launch {
+                    snackbarHostState.showSnackbar(message = it)
+                }
             }
-        }
-    )
+        )
+    }
 
     // permission state
     val notificationPermissionState = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -144,7 +148,9 @@ private fun HomeContentComponent(
     launcher: ManagedActivityResultLauncher<Intent, ActivityResult>
 ) {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
     ) {
         HomeHeader()
 
@@ -183,15 +189,6 @@ fun HomeHeader() {
             fontWeight = FontWeight.Bold
         )
     }
-}
-
-@Composable
-fun HomeSheet(
-    showBottomSheet: MutableState<Boolean>,
-    onSaveMedication: (message: String) -> Unit
-) {
-    if(showBottomSheet.value)
-        AddMedicationScreen(showBottomSheet, onSaveMedication)
 }
 
 @Composable

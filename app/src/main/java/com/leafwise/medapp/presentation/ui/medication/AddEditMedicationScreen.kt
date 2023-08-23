@@ -3,6 +3,8 @@ package com.leafwise.medapp.presentation.ui.medication
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -10,37 +12,42 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.leafwise.medapp.R
+import com.leafwise.medapp.domain.model.meds.EditMedication
+import com.leafwise.medapp.domain.model.meds.ModifyMedState
 import com.leafwise.medapp.presentation.components.LoadingIndicator
-
+@Suppress("UnusedParameter")
 @Composable
-fun AddMedicationScreen(
+fun AddEditMedicationScreen(
+    isEdit: Boolean,
     showBottomSheet: MutableState<Boolean>,
+    //TODO Rethink this name and action method
     onSaveMedication: (message: String) -> Unit
 ) {
-    val viewModel: MedicationViewModel = hiltViewModel()
-    val stateAddMedication by remember { viewModel.medicationUiState }.
-    collectAsStateWithLifecycle()
+    val viewModel: AddEditMedicationViewModel = hiltViewModel()
+    val uiState = viewModel.modifyMedState.collectAsStateWithLifecycle()
 
+    val modifyMedState by remember { derivedStateOf { uiState.value } }
 
-    when (val state = stateAddMedication) {
-        MedicationViewModel.MedicationUiState.Initial -> {
+    when (val state = modifyMedState) {
+        is ModifyMedState.Data -> {
             MedicationSheet(
+                med = state.med,
                 showBottomSheet = showBottomSheet,
-                addMedication = {
-                    viewModel.addMedication(it)
-                }
+                onUpdateMed = viewModel::updateCurrentMed,
+                onSaveMed = viewModel::addMedication,
             )
+
         }
-        MedicationViewModel.MedicationUiState.Loading -> {
+        ModifyMedState.Loading -> {
             LoadingIndicator(modifier = Modifier.fillMaxSize())
         }
-        MedicationViewModel.MedicationUiState.Success -> {
+        ModifyMedState.Saved -> {
             onSaveMedication(stringResource(id = R.string.medication_added))
         }
-        is MedicationViewModel.MedicationUiState.Error -> {
-            onSaveMedication(
-                state.throwable.message ?: stringResource(id = R.string.some_unknown_error)
-            )
+        is ModifyMedState.Error -> {
+            onSaveMedication(state.error)
         }
     }
+
+
 }

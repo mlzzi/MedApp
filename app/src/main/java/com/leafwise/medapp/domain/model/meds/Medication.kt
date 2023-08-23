@@ -1,4 +1,4 @@
-package com.leafwise.medapp.domain.model
+package com.leafwise.medapp.domain.model.meds
 
 import androidx.annotation.StringRes
 import com.leafwise.medapp.R

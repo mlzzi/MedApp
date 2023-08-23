@@ -1,6 +1,6 @@
 package com.leafwise.medapp.data.repository
 
-import com.leafwise.medapp.domain.model.Medication
+import com.leafwise.medapp.domain.model.meds.Medication
 import kotlinx.coroutines.flow.Flow
 
 interface MedicationRepository {

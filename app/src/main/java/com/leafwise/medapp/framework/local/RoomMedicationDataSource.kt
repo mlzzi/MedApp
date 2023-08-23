@@ -1,7 +1,7 @@
 package com.leafwise.medapp.framework.local
 
 import com.leafwise.medapp.data.repository.MedicationLocalDataSource
-import com.leafwise.medapp.domain.model.Medication
+import com.leafwise.medapp.domain.model.meds.Medication
 import com.leafwise.medapp.framework.db.dao.MedicationDao
 import com.leafwise.medapp.framework.db.entity.MedicationEntity
 import com.leafwise.medapp.framework.db.entity.toMedicationModel
