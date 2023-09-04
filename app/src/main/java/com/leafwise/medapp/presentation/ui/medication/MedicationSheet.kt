@@ -7,19 +7,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -40,9 +40,11 @@ import com.leafwise.medapp.domain.model.meds.EditMedication
 import com.leafwise.medapp.domain.model.meds.TypeMedication
 import com.leafwise.medapp.presentation.components.SelectDateItem
 import com.leafwise.medapp.presentation.components.SelectorItem
+import com.leafwise.medapp.presentation.components.TextIconButton
 import com.leafwise.medapp.presentation.components.TextItem
 import com.leafwise.medapp.presentation.theme.Dimens
-import com.leafwise.medapp.util.extensions.ListGenerator.generateQuantityList
+import com.leafwise.medapp.util.extensions.ListGenerator
+import com.leafwise.medapp.util.extensions.ListGenerator.generateCalendarList
 import com.leafwise.medapp.util.extensions.ListGenerator.generateWeekdaysList
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -51,6 +53,7 @@ import java.util.Calendar
 @Composable
 fun MedicationSheet(
     med: EditMedication,
+    canSave: Boolean,
     showBottomSheet: MutableState<Boolean>,
     onUpdateMed: (medication: EditMedication) -> Unit,
     onSaveMed: (medication: EditMedication) -> Unit
@@ -67,7 +70,7 @@ fun MedicationSheet(
 
         ) {
 
-        val medDoses by remember(med.doses) { mutableStateOf(med.doses) }
+        val medDoses by remember(med.doses) { derivedStateOf { med.doses } }
         val firstOccurrence by remember(med.firstOccurrence) { mutableStateOf(med.firstOccurrence) }
 
         LazyColumn(
@@ -95,34 +98,24 @@ fun MedicationSheet(
                 Divider(modifier = Modifier.padding(vertical = Dimens.MediumPadding.size))
             }
 
-            item {
-                DoseDateDetail()
-            }
+            doseDateDetailItems(med, medDoses, onUpdateMed)
 
             item {
-
-                Button(
-                    modifier = Modifier.padding(Dimens.MediumPadding.size),
-                    enabled = verifyFields(med.name),
+                TextIconButton(
+                    enable = canSave,
                     onClick = {
                         onSaveMed(med)
-
+                        //TODO Below should be controlled by the answer of SaveMed
                         scope.launch { sheetState.hide() }.invokeOnCompletion {
                             if (!sheetState.isVisible) {
                                 showBottomSheet.value = false
                             }
                         }
                     },
-                    contentPadding = ButtonDefaults.ContentPadding
-                ) {
+                    icon = Icons.Default.Done,
+                    text = stringResource(id = R.string.save)
+                )
 
-                    Icon(
-                        Icons.Filled.Done,
-                        contentDescription = stringResource(id = R.string.save)
-                    )
-                    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                    Text(stringResource(id = R.string.save))
-                }
             }
 
         }
@@ -130,14 +123,6 @@ fun MedicationSheet(
     }
 
 }
-
-fun verifyFields(medName: String): Boolean {
-    return when {
-        medName.isEmpty() -> false
-        else -> true
-    }
-}
-
 
 @Composable
 private fun MainInfo(
@@ -169,7 +154,7 @@ private fun MainInfo(
         SelectorItem(
             modifier = Modifier.weight(1f),
             label = stringResource(id = R.string.medsheet_quantity),
-            options = generateQuantityList(50),
+            options = ListGenerator.NumberListBuilder(50).generateList().addDecimals().build(),
             selectedIndex = medQuantity,
             onSelect = { onUpdateMed(med.copy(quantity = it)) }
         )
@@ -184,85 +169,109 @@ private fun DateInfo(
     onUpdateMed: (medication: EditMedication) -> Unit,
 ) {
 
-
+    val medHowManyTimes by remember(med.howManyTimes) { mutableIntStateOf(med.howManyTimes) }
     val medFrequency by remember(med.frequency) { mutableStateOf(med.frequency) }
+    LaunchedEffect(medFrequency){
+        medFrequency.run {
+            val updatedDoses = when {
+                this < AlarmInterval.DAILY -> {
+                    listOf(medDoses.first())
+                }
+                this == AlarmInterval.WEEKLY -> {
+                    listOf(firstOccurrence)
+                }
+                else -> {
+                    generateCalendarList(medHowManyTimes, medDoses.first())
+                }
+            }
+
+            onUpdateMed(med.copy(doses = updatedDoses))
+        }
+    }
     SelectorItem(
         label = stringResource(id = R.string.medsheet_frequency),
         options = AlarmInterval.values().map { stringResource(id = it.getStringRes()) }.toTypedArray(),
         selectedIndex = medFrequency.ordinal,
-        onSelect = { onUpdateMed(med.copy(frequency = AlarmInterval.values()[it])) }
+        onSelect = {
+            val frequencySelected = AlarmInterval.values()[it]
+            onUpdateMed(med.copy(
+                frequency = frequencySelected,
+            ))
+        }
     )
 
     Spacer(modifier = Modifier.size(Dimens.SmallPadding.size))
-
-
 
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        val medHowManyTimes by remember(med.howManyTimes) { mutableIntStateOf(med.howManyTimes) }
+        when {
+            medFrequency < AlarmInterval.DAILY -> {
+                SelectDateItem(
+                    label = stringResource(id = R.string.medsheet_starting_at),
+                    value = if(medDoses.isNotEmpty()) medDoses.first() else Calendar.getInstance(),
+                    onValueChange = {
+                        onUpdateMed(med.copy(
+                            doses = listOf(it))
+                        )
+                    }
+                )
+            }
+            medFrequency == AlarmInterval.WEEKLY -> {
+                var dayOfWeek by rememberSaveable { mutableIntStateOf(0) }
 
-        if(medFrequency < AlarmInterval.DAILY){
-            SelectDateItem(
-                label = stringResource(id = R.string.medsheet_starting_at),
-                value = if(medDoses.isNotEmpty()) medDoses.first() else Calendar.getInstance(),
-                onValueChange = {
-                    onUpdateMed(med.copy(doses = listOf(it)))
-                }
-            )
-        } else if (medFrequency == AlarmInterval.WEEKLY){
-            var dayOfWeek by rememberSaveable { mutableIntStateOf(0) }
-
-            SelectorItem(
-                label = stringResource(id = R.string.medsheet_day_of_week),
-                options = LocalContext.current.generateWeekdaysList().toTypedArray(),
-                selectedIndex = dayOfWeek,
-                onSelect = {
-                    dayOfWeek = it
-                    val updatedDate = firstOccurrence.clone() as Calendar
-                    updatedDate.set(Calendar.DAY_OF_WEEK, dayOfWeek)
-                    onUpdateMed(med.copy(firstOccurrence = updatedDate))
-                }
-            )
-        } else {
-            SelectorItem(
-                label = stringResource(id = R.string.medsheet_how_many_times),
-                options = generateQuantityList(7),
-                selectedIndex = medHowManyTimes,
-                onSelect = { onUpdateMed(med.copy(howManyTimes = it)) }
-            )
+                SelectorItem(
+                    label = stringResource(id = R.string.medsheet_day_of_week),
+                    options = LocalContext.current.generateWeekdaysList().toTypedArray(),
+                    selectedIndex = dayOfWeek,
+                    onSelect = {
+                        dayOfWeek = it
+                        val updatedDate = firstOccurrence.clone() as Calendar
+                        updatedDate.set(Calendar.DAY_OF_WEEK, dayOfWeek)
+                        onUpdateMed(med.copy(firstOccurrence = updatedDate))
+                    }
+                )
+            }
+            else -> {
+                val daysList by remember { mutableStateOf( ListGenerator.NumberListBuilder(7).generateList().build()) }
+                SelectorItem(
+                    label = stringResource(id = R.string.medsheet_how_many_times),
+                    options = daysList,
+                    selectedIndex = medHowManyTimes - 1,
+                    onSelect = {
+                        val daysCountSelected = daysList[it].toInt()
+                        daysCountSelected.run {
+                            onUpdateMed(med.copy(
+                                howManyTimes = this,
+                                doses = generateCalendarList(this, medDoses.first())
+                            ))
+                        }
+                    }
+                )
+            }
         }
-
-
-//        val medFinalTriggerDate by remember(med.finalTriggerDate) { mutableStateOf(med.finalTriggerDate) }
-//        SelectorItem(
-//            modifier = Modifier.weight(1f),
-//            label = stringResource(id = R.string.medsheet_how_many_days),
-//            options = arrayOf("1", "2", "3", "4"),
-//            selectedIndex = medFinalTriggerDate,
-//            onSelect = { onUpdateMed(med.copy(finalTriggerDate = it)) }
-//        )
     }
 }
 
-@Composable
-private fun DoseDateDetail() {
-    SelectDateItem(
-        label = "Dose 1",
-        value = Calendar.getInstance(),
-        onValueChange = {
 
-        }
-    )
+private fun LazyListScope.doseDateDetailItems(
+    med: EditMedication,
+    medDoses: List<Calendar>,
+    onUpdateMed: (medication: EditMedication) -> Unit
+) {
+    return itemsIndexed(medDoses){ index, dose ->
+        SelectDateItem(
+            label = stringResource(id = R.string.medsheet_dose).plus(" ").plus(index + 1),
+            value = dose,
+            onValueChange = {
+                val dosesUpdated = medDoses.toMutableList() // Convert to mutable list
+                dosesUpdated[index] = it // Update the dose at the specific index
+                onUpdateMed(med.copy(doses = dosesUpdated)) // Convert back to immutable list
+            }
+        )
 
-    Spacer(modifier = Modifier.size(Dimens.SmallPadding.size))
-
-    SelectDateItem(
-        label = "Dose 2",
-        value = Calendar.getInstance(),
-        onValueChange = {}
-    )
-
+        Spacer(modifier = Modifier.size(Dimens.SmallPadding.size))
+    }
 
 }
 
