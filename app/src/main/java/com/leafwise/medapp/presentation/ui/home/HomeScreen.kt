@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -46,19 +47,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import com.leafwise.medapp.R
 import com.leafwise.medapp.domain.model.meds.Medication
 import com.leafwise.medapp.domain.model.meds.TypeMedication
 import com.leafwise.medapp.framework.db.entity.MedicationEntity
+import com.leafwise.medapp.presentation.components.FloatingButton
 import com.leafwise.medapp.presentation.components.LoadingIndicator
-import com.leafwise.medapp.presentation.components.MedAddButton
 import com.leafwise.medapp.presentation.components.MedItem
 import com.leafwise.medapp.presentation.ui.medication.AddEditMedicationScreen
-import com.leafwise.medapp.presentation.ui.medication.AddEditMedicationViewModel
 import kotlinx.coroutines.launch
 
 
@@ -110,15 +108,17 @@ fun HomeScreen(
 
     Scaffold(
         floatingActionButton = {
-            MedAddButton {
-                if(!notificationPermissionState.hasPermission){
-                    notificationPermissionState.launchPermissionRequest()
-                } else {
-                    onAddClick()
-                    showBottomSheet.value = true
+            FloatingButton(
+                icon = Icons.Default.Add,
+                onClick = {
+                    if(!notificationPermissionState.hasPermission){
+                        notificationPermissionState.launchPermissionRequest()
+                    } else {
+                        onAddClick()
+                        showBottomSheet.value = true
+                    }
                 }
-
-            }
+            )
         },
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState) { data ->

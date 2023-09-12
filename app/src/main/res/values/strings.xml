@@ -64,7 +64,7 @@
     <string name="medsheet_day_of_week">Day of Week</string>
     <string name="medsheet_how_many_times">How many times per day</string>
     <string name="medsheet_how_many_days">How many days</string>
-    <string name="medsheet_dose">Dose 1</string>
+    <string name="medsheet_dose">Dose</string>
 <!--    Type medication labels-->
     <string name="medsheet_type_none">None</string>
     <string name="medsheet_type_pill">Pill</string>

@@ -6,10 +6,10 @@ import java.util.Calendar
 data class EditMedication(
     val name: String = "",
     val type: TypeMedication = TypeMedication.NONE,
-    val quantity: Int = 0,
+    val quantity: Int = 1,
     val frequency: AlarmInterval = AlarmInterval.DAILY,
     val howManyTimes: Int = 1,
     val firstOccurrence: Calendar = Calendar.getInstance(),
     val finalTriggerDate: Calendar = Calendar.getInstance(),
-    val doses: List<Calendar> = listOf()
+    val doses: List<Calendar> = listOf(Calendar.getInstance())
 )

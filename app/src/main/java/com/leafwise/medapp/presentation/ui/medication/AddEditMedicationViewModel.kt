@@ -28,12 +28,19 @@ class AddEditMedicationViewModel @Inject constructor(
     private val _modifyMedState : MutableStateFlow<ModifyMedState> =
         MutableStateFlow(ModifyMedState.Data(
             med = EditMedication(),
-            isEdit = false
+            isEdit = false,
+            canSave = false
         ))
     val modifyMedState: StateFlow<ModifyMedState> = _modifyMedState.asStateFlow()
 
     fun updateCurrentMed(med: EditMedication) {
-        _modifyMedState.update { ModifyMedState.Data(isEdit = false, med = med) }
+        _modifyMedState.update {
+            ModifyMedState.Data(
+                isEdit = false,
+                med = med,
+                canSave = med.name.isNotEmpty()
+            )
+        }
     }
 
 

@@ -60,7 +60,7 @@
     <string name="medsheet_day_of_week">Dia da semana</string>
     <string name="medsheet_how_many_times">Quantas vezes ao dia</string>
     <string name="medsheet_how_many_days">Por quantos dias</string>
-    <string name="medsheet_dose">Dose 1</string>
+    <string name="medsheet_dose">Dose</string>
     <!--    Type medication labels-->
     <string name="medsheet_type_none">Nenhum</string>
     <string name="medsheet_type_pill">Comprimido</string>

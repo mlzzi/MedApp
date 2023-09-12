@@ -14,7 +14,8 @@ package com.leafwise.medapp.domain.model.meds
 data class AddEditMedicationState(
     val modifyMedState: ModifyMedState = ModifyMedState.Data(
         med = EditMedication(),
-        isEdit = false
+        isEdit = false,
+        canSave = false,
     ),
     val availableMeds: List<Medication> = emptyList()
 )
@@ -23,7 +24,8 @@ sealed class ModifyMedState {
 
     data class Data(
         val med: EditMedication,
-        val isEdit: Boolean
+        val isEdit: Boolean,
+        val canSave: Boolean
     ) : ModifyMedState()
 
 
