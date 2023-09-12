@@ -11,7 +11,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.leafwise.medapp.R
-import com.leafwise.medapp.domain.model.meds.ModifyMedState
 import com.leafwise.medapp.presentation.components.LoadingIndicator
 @Suppress("UnusedParameter")
 @Composable
@@ -33,7 +32,7 @@ fun AddEditMedicationScreen(
                 canSave = state.canSave,
                 showBottomSheet = showBottomSheet,
                 onUpdateMed = viewModel::updateCurrentMed,
-                onSaveMed = viewModel::addMedication,
+                onSaveMed = viewModel::saveMedication,
             )
 
         }

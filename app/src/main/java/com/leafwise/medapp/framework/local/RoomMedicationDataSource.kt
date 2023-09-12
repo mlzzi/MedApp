@@ -1,6 +1,7 @@
 package com.leafwise.medapp.framework.local
 
 import com.leafwise.medapp.data.repository.MedicationLocalDataSource
+import com.leafwise.medapp.domain.model.AlarmInterval
 import com.leafwise.medapp.domain.model.meds.Medication
 import com.leafwise.medapp.framework.db.dao.MedicationDao
 import com.leafwise.medapp.framework.db.entity.MedicationEntity
@@ -38,6 +39,10 @@ class RoomMedicationDataSource @Inject constructor(
         MedicationEntity(
             name = name,
             type = type.ordinal,
-            quantity = quantity
+            quantity = quantity,
+            frequency = frequency.ordinal,
+            howManyTimes = howManyTimes,
+            firstOccurrence = firstOccurrence,
+            doses = doses,
         )
 }

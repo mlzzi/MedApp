@@ -2,20 +2,13 @@ package com.leafwise.medapp.presentation.ui.medication
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.leafwise.medapp.domain.model.meds.AddEditMedicationState
 import com.leafwise.medapp.domain.model.meds.EditMedication
-import com.leafwise.medapp.domain.model.meds.Medication
-import com.leafwise.medapp.domain.model.meds.ModifyMedState
-import com.leafwise.medapp.domain.model.meds.TypeMedication
 import com.leafwise.medapp.domain.usecase.AddMedicationUseCase
 import com.leafwise.medapp.util.extensions.watchStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -26,7 +19,8 @@ class AddEditMedicationViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _modifyMedState : MutableStateFlow<ModifyMedState> =
-        MutableStateFlow(ModifyMedState.Data(
+        MutableStateFlow(
+            ModifyMedState.Data(
             med = EditMedication(),
             isEdit = false,
             canSave = false
@@ -44,13 +38,17 @@ class AddEditMedicationViewModel @Inject constructor(
     }
 
 
-    fun addMedication(medication: EditMedication) = viewModelScope.launch {
+    fun saveMedication(medication: EditMedication) = viewModelScope.launch {
         medication.run {
             addMedicationUseCase.invoke(
                 AddMedicationUseCase.Params(
                     name = name,
                     type = type,
-                    quantity = quantity
+                    quantity = quantity,
+                    frequency = frequency,
+                    howManyTimes = howManyTimes,
+                    firstOccurrence = firstOccurrence,
+                    doses = doses,
                 )
             )
         }.watchStatus(

@@ -1,4 +1,7 @@
-package com.leafwise.medapp.domain.model.meds
+package com.leafwise.medapp.presentation.ui.medication
+
+import com.leafwise.medapp.domain.model.meds.EditMedication
+import com.leafwise.medapp.domain.model.meds.Medication
 
 // Testable state
 //sealed class AddEditMedicationsState {

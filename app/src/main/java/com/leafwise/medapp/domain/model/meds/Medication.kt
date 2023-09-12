@@ -2,11 +2,17 @@ package com.leafwise.medapp.domain.model.meds
 
 import androidx.annotation.StringRes
 import com.leafwise.medapp.R
+import com.leafwise.medapp.domain.model.AlarmInterval
+import java.util.Calendar
 
 data class Medication(
     val name: String,
     val type: TypeMedication,
     val quantity: Int,
+    val frequency: AlarmInterval,
+    val howManyTimes: Int,
+    val firstOccurrence: Calendar,
+    val doses: List<Calendar>,
 )
 
 
