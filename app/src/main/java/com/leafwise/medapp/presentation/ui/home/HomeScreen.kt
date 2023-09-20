@@ -275,12 +275,12 @@ class HomeUiStatePreviewParameterProvider :
         get() = sequenceOf(
             HomeViewModel.HomeUiState.Empty,
             HomeViewModel.HomeUiState.Loading,
-            HomeViewModel.HomeUiState.Success(
-                listOf(
-                    Medication("Name", TypeMedication.CREAM, 2),
-                    Medication("Name2", TypeMedication.AEROSOL_INHALER, 1)
-                )
-            ),
+//            HomeViewModel.HomeUiState.Success(
+//                listOf(
+//                    Medication("Name", TypeMedication.CREAM, 2),
+//                    Medication("Name2", TypeMedication.AEROSOL_INHALER, 1)
+//                )
+//            ),
             HomeViewModel.HomeUiState.Error(R.string.home_error_button_text)
         )
 }
