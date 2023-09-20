@@ -14,9 +14,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.rounded.Warning
@@ -39,6 +42,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.modifier.modifierLocalProvider
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -56,6 +61,7 @@ import com.leafwise.medapp.framework.db.entity.MedicationEntity
 import com.leafwise.medapp.presentation.components.FloatingButton
 import com.leafwise.medapp.presentation.components.LoadingIndicator
 import com.leafwise.medapp.presentation.components.MedItem
+import com.leafwise.medapp.presentation.theme.Dimens
 import com.leafwise.medapp.presentation.ui.medication.AddEditMedicationScreen
 import kotlinx.coroutines.launch
 
@@ -158,8 +164,10 @@ private fun HomeContentComponent(
             is HomeViewModel.HomeUiState.Loading ->
                 LoadingIndicator(modifier = Modifier.fillMaxSize())
 
-            is HomeViewModel.HomeUiState.Success ->
-                MedItems(listOf())
+            is HomeViewModel.HomeUiState.Success -> {
+                if(uiState.data.isEmpty()) EmptyView()
+                else MedItems(uiState.data)
+            }
 
             is HomeViewModel.HomeUiState.Empty ->
                 EmptyView()
@@ -174,8 +182,10 @@ private fun HomeContentComponent(
 @Composable
 fun HomeHeader() {
     Row(
+        modifier = Modifier
+            .padding(vertical = Dimens.MediumPadding.size),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Image(
             modifier = Modifier.size(48.dp),
@@ -192,15 +202,19 @@ fun HomeHeader() {
 }
 
 @Composable
-fun MedItems(content: List<MedicationEntity>) {
-    LazyRow(
+fun MedItems(meds: List<Medication>) {
+    LazyColumn(
         modifier = Modifier
             .fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ){
-        items(content.size){
-            MedItem()
+        items(meds){med ->
+            MedItem(
+                item = med,
+                onRemove = {}
+            )
         }
+
     }
 }
 
