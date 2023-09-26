@@ -18,6 +18,7 @@ interface AddMedicationUseCase {
 
     data class Params(
         val uid: Int? = null,
+        val isActive: Boolean,
         val name: String,
         val type: TypeMedication,
         val quantity: Int,
@@ -37,6 +38,7 @@ class AddMedicationUseCaseImpl @Inject constructor(
         return withContext(dispatchers.io()) {
             repository.insertItem(
                 Medication(
+                    isActive = params.isActive,
                     name = params.name,
                     type = params.type,
                     quantity = params.quantity,

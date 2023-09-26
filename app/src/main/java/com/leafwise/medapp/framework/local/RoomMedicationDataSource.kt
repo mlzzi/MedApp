@@ -1,7 +1,6 @@
 package com.leafwise.medapp.framework.local
 
 import com.leafwise.medapp.data.repository.MedicationLocalDataSource
-import com.leafwise.medapp.domain.model.AlarmInterval
 import com.leafwise.medapp.domain.model.meds.Medication
 import com.leafwise.medapp.framework.db.dao.MedicationDao
 import com.leafwise.medapp.framework.db.entity.MedicationEntity
@@ -19,9 +18,9 @@ class RoomMedicationDataSource @Inject constructor(
         }
     }
 
-    override suspend fun insertAll(medication: List<Medication>) {
+    override suspend fun insertAll(medications: List<Medication>) {
         medicationDao.insertAll(
-            medication.map {
+            medications.map {
                 it.toMedicationEntity()
             }
         )
@@ -37,6 +36,7 @@ class RoomMedicationDataSource @Inject constructor(
 
     private fun Medication.toMedicationEntity() =
         MedicationEntity(
+            isActive = isActive,
             name = name,
             type = type.ordinal,
             quantity = quantity,

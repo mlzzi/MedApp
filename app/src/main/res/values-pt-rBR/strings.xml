@@ -5,6 +5,7 @@
 
     <string name="app_name">MedApp</string>
     <string name="home_empty_view">Não há medicamentos cadastrados! Conte-me sobre o que você precisa e nós cuidaremos!</string>
+    <string name="home_next_dose">Próxima dose:</string>
     <string name="save">Salvar</string>
     <string name="dismiss">Dispensar</string>
     <string name="add">Adicionar</string>

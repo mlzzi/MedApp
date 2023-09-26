@@ -7,7 +7,7 @@ interface MedicationLocalDataSource {
 
     fun getAll(): Flow<List<Medication>>
 
-    suspend fun insertAll(medication: List<Medication>)
+    suspend fun insertAll(medications: List<Medication>)
 
     suspend fun insertItem(medication: Medication)
 

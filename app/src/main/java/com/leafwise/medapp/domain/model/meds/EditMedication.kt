@@ -4,6 +4,7 @@ import com.leafwise.medapp.domain.model.AlarmInterval
 import java.util.Calendar
 
 data class EditMedication(
+    val isActive: Boolean = true,
     val name: String = "",
     val type: TypeMedication = TypeMedication.NONE,
     val quantity: Int = 1,

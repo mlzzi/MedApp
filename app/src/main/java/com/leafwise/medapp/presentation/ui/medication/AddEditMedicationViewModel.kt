@@ -42,6 +42,7 @@ class AddEditMedicationViewModel @Inject constructor(
         medication.run {
             addMedicationUseCase.invoke(
                 AddMedicationUseCase.Params(
+                    isActive = true,
                     name = name,
                     type = type,
                     quantity = quantity,

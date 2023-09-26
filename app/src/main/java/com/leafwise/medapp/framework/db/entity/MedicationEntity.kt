@@ -12,6 +12,8 @@ import java.util.Calendar
 data class MedicationEntity(
     @ColumnInfo("uid")
     @PrimaryKey(autoGenerate = true) val uid: Int = 0,
+    @ColumnInfo("isActive")
+    val isActive: Boolean,
     @ColumnInfo("name")
     val name: String,
     @ColumnInfo("type")
@@ -30,6 +32,7 @@ data class MedicationEntity(
 
 fun List<MedicationEntity>.toMedicationModel() = map {
     Medication(
+        isActive = it.isActive,
         name = it.name,
         type = TypeMedication.values()[it.type],
         quantity = it.quantity,
