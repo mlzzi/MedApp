@@ -14,11 +14,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -37,13 +35,13 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.modifier.modifierLocalProvider
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -52,18 +50,24 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import com.leafwise.medapp.R
+import com.leafwise.medapp.domain.model.meds.EditMedication
 import com.leafwise.medapp.domain.model.meds.Medication
-import com.leafwise.medapp.domain.model.meds.TypeMedication
-import com.leafwise.medapp.framework.db.entity.MedicationEntity
+import com.leafwise.medapp.domain.model.meds.toEditMedication
 import com.leafwise.medapp.presentation.components.FloatingButton
 import com.leafwise.medapp.presentation.components.LoadingIndicator
 import com.leafwise.medapp.presentation.components.MedItem
 import com.leafwise.medapp.presentation.theme.Dimens
 import com.leafwise.medapp.presentation.ui.medication.AddEditMedicationScreen
+import com.leafwise.medapp.presentation.ui.medication.AddEditMedicationViewModel
+import com.leafwise.medapp.presentation.ui.medication.ModifyMedState
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlin.reflect.KFunction1
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
@@ -73,23 +77,29 @@ fun HomeScreen(
     uiState: HomeViewModel.HomeUiState,
     onAddClick: () -> Unit,
     verifyPermissions: () -> Unit,
-    ) {
+) {
 
     val showBottomSheet = remember { mutableStateOf(false) }
-    val snackbarHostState = remember { SnackbarHostState() }
-    val dismissSnackbarState = rememberDismissState()
+    val snackBarHostState = remember { SnackbarHostState() }
+    val dismissSnackBarState = rememberDismissState()
     val scope = rememberCoroutineScope()
 
-    if(showBottomSheet.value){
+    val addEditMedicationViewModel: AddEditMedicationViewModel = hiltViewModel()
+    val sheetUiState by remember { addEditMedicationViewModel.modifyMedState }
+        .collectAsStateWithLifecycle()
+
+    if (showBottomSheet.value) {
         AddEditMedicationScreen(
+            uiState = sheetUiState,
             isEdit = true,
             showBottomSheet = showBottomSheet,
-            onSaveMedication = {
-                scope.launch {
-                    snackbarHostState.showSnackbar(message = it)
-                }
+            onUpdateMed = addEditMedicationViewModel::updateCurrentMed,
+            onSaveMed = addEditMedicationViewModel::saveMedication,
+        ) {
+            scope.launch {
+                snackBarHostState.showSnackbar(message = it)
             }
-        )
+        }
     }
 
     // permission state
@@ -102,12 +112,13 @@ fun HomeScreen(
     }
 
     //Verify permission
-    LaunchedEffect(Unit){
+    LaunchedEffect(Unit) {
         verifyPermissions()
     }
 
     val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()) {
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) {
         verifyPermissions()
     }
 
@@ -117,9 +128,10 @@ fun HomeScreen(
             FloatingButton(
                 icon = Icons.Default.Add,
                 onClick = {
-                    if(!notificationPermissionState.hasPermission){
+                    if (!notificationPermissionState.hasPermission) {
                         notificationPermissionState.launchPermissionRequest()
                     } else {
+                        addEditMedicationViewModel.updateCurrentMed(EditMedication())
                         onAddClick()
                         showBottomSheet.value = true
                     }
@@ -127,9 +139,9 @@ fun HomeScreen(
             )
         },
         snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState) { data ->
+            SnackbarHost(hostState = snackBarHostState) { data ->
                 SwipeToDismiss(
-                    state = dismissSnackbarState,
+                    state = dismissSnackBarState,
                     background = {},
                     dismissContent = { Snackbar(snackbarData = data) },
                     modifier = Modifier.fillMaxWidth(),
@@ -143,40 +155,34 @@ fun HomeScreen(
                 .padding(innerPadding),
             color = MaterialTheme.colorScheme.background,
         ) {
-            HomeContentComponent(uiState = uiState, launcher = launcher)
-        }
-    }
-}
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+            ) {
+                HomeHeader()
 
-@Composable
-private fun HomeContentComponent(
-    uiState: HomeViewModel.HomeUiState,
-    launcher: ManagedActivityResultLauncher<Intent, ActivityResult>
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-    ) {
-        HomeHeader()
+                when (uiState) {
+                    is HomeViewModel.HomeUiState.Loading ->
+                        LoadingIndicator(modifier = Modifier.fillMaxSize())
 
-        when (uiState) {
-            is HomeViewModel.HomeUiState.Loading ->
-                LoadingIndicator(modifier = Modifier.fillMaxSize())
+                    is HomeViewModel.HomeUiState.Success -> {
+                        MedItems(
+                            meds = uiState.data,
+                            onEditClick = addEditMedicationViewModel::updateCurrentMed,
+                            showBottomSheet = showBottomSheet,
+                        )
+                    }
 
-            is HomeViewModel.HomeUiState.Success -> {
-                if(uiState.data.isEmpty()) EmptyView()
-                else MedItems(uiState.data)
+                    is HomeViewModel.HomeUiState.Empty ->
+                        EmptyView()
+
+                    is HomeViewModel.HomeUiState.Error ->
+                        ErrorView(stringResource(id = uiState.message), launcher)
+                }
             }
-
-            is HomeViewModel.HomeUiState.Empty ->
-                EmptyView()
-
-            is HomeViewModel.HomeUiState.Error ->
-                ErrorView(stringResource(id = uiState.message), launcher)
         }
     }
-
 }
 
 @Composable
@@ -202,16 +208,24 @@ fun HomeHeader() {
 }
 
 @Composable
-fun MedItems(meds: List<Medication>) {
+fun MedItems(
+    meds: List<Medication>,
+    onEditClick: KFunction1<EditMedication, Unit>,
+    showBottomSheet: MutableState<Boolean>,
+) {
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
-    ){
-        items(meds){med ->
+    ) {
+        items(meds) { med ->
             MedItem(
                 item = med,
-                onRemove = {}
+                onRemove = {},
+                onEdit = {
+                    onEditClick(med.toEditMedication())
+                    showBottomSheet.value = true
+                },
             )
         }
 
@@ -221,7 +235,7 @@ fun MedItems(meds: List<Medication>) {
 
 @Composable
 fun EmptyView() {
-    Box (modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
 
         Text(
             text = stringResource(id = R.string.home_empty_view),
@@ -279,8 +293,7 @@ fun HomePreview(
     HomeScreen(
         uiState = uiState,
         onAddClick = {},
-        verifyPermissions = { true }
-    )
+    ) { true }
 }
 
 class HomeUiStatePreviewParameterProvider :

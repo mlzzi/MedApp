@@ -38,6 +38,7 @@ class AddMedicationUseCaseImpl @Inject constructor(
         return withContext(dispatchers.io()) {
             repository.insertItem(
                 Medication(
+                    uid = 0, //TODO needs to be removed
                     isActive = params.isActive,
                     name = params.name,
                     type = params.type,

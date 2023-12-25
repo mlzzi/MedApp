@@ -12,15 +12,20 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.DismissValue
 import androidx.compose.material3.ElevatedAssistChip
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.SwipeToDismiss
@@ -35,6 +40,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -60,6 +66,7 @@ import java.util.Calendar
 fun MedItem(
     item: Medication,
     onRemove: () -> Unit,
+    onEdit: () -> Unit,
 ){
     val context = LocalContext.current
     var show by remember { mutableStateOf(true) }
@@ -95,7 +102,8 @@ fun MedItem(
                             "$quantity ${stringResource(id = type.label)}",
                         ),
                         cardCheck = isActive,
-                        footer = nextDose
+                        footer = nextDose,
+                        onIconClick = onEdit
                     )
                 }
 
@@ -121,7 +129,8 @@ private fun CardItem(
     title: String,
     chips: List<String>?,
     cardCheck: Boolean,
-    footer: String
+    footer: String,
+    onIconClick: () -> Unit = {},
 ) {
     ElevatedCard(
         modifier = Modifier
@@ -186,12 +195,27 @@ private fun CardItem(
 
             var isActive by rememberSaveable { mutableStateOf(cardCheck) }
 
-            Switch(
-                checked = isActive,
-                onCheckedChange = { newCheckedState ->
-                    isActive = newCheckedState
+            Column (
+                horizontalAlignment = Alignment.End,
+
+            ){
+                IconButton(
+                    modifier = Modifier.size(30.dp),
+                    onClick = { onIconClick() }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "",
+                    )
                 }
-            )
+                Switch(
+                    checked = isActive,
+                    onCheckedChange = { newCheckedState ->
+                        isActive = newCheckedState
+                    }
+                )
+            }
+
         }
     }
 }
@@ -203,6 +227,7 @@ fun PreviewMedItem(){
     MedAppTheme {
         MedItem(
             Medication(
+                uid = 1,
                 isActive = true,
                 name = "Dorflex",
                 type = TypeMedication.CREAM,
@@ -211,7 +236,7 @@ fun PreviewMedItem(){
                 howManyTimes = 2,
                 firstOccurrence = Calendar.getInstance(),
                 doses = listOf(),
-            ), onRemove = {}
+            ), onRemove = {}, onEdit = {},
 
         )
     }

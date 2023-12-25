@@ -32,6 +32,7 @@ data class MedicationEntity(
 
 fun List<MedicationEntity>.toMedicationModel() = map {
     Medication(
+        uid = it.uid,
         isActive = it.isActive,
         name = it.name,
         type = TypeMedication.values()[it.type],

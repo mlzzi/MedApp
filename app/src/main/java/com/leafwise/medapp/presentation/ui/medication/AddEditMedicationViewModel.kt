@@ -1,5 +1,6 @@
 package com.leafwise.medapp.presentation.ui.medication
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leafwise.medapp.domain.model.meds.EditMedication
@@ -18,19 +19,24 @@ class AddEditMedicationViewModel @Inject constructor(
     private val addMedicationUseCase: AddMedicationUseCase
 ) : ViewModel() {
 
+    init {
+        Log.d("AddEditMedicationViewModel", "init")
+    }
+
     private val _modifyMedState : MutableStateFlow<ModifyMedState> =
         MutableStateFlow(
             ModifyMedState.Data(
-            med = EditMedication(),
-            isEdit = false,
-            canSave = false
-        ))
+                med = EditMedication(),
+                isEdit = false,
+                canSave = false
+            )
+        )
     val modifyMedState: StateFlow<ModifyMedState> = _modifyMedState.asStateFlow()
 
     fun updateCurrentMed(med: EditMedication) {
         _modifyMedState.update {
             ModifyMedState.Data(
-                isEdit = false,
+                isEdit = med.uid != 0,
                 med = med,
                 canSave = med.name.isNotEmpty()
             )
