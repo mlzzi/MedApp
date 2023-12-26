@@ -64,7 +64,6 @@ import com.leafwise.medapp.presentation.components.MedItem
 import com.leafwise.medapp.presentation.theme.Dimens
 import com.leafwise.medapp.presentation.ui.medication.AddEditMedicationScreen
 import com.leafwise.medapp.presentation.ui.medication.AddEditMedicationViewModel
-import com.leafwise.medapp.presentation.ui.medication.ModifyMedState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlin.reflect.KFunction1
@@ -170,6 +169,7 @@ fun HomeScreen(
                         MedItems(
                             meds = uiState.data,
                             onEditClick = addEditMedicationViewModel::updateCurrentMed,
+                            onSaveMed = addEditMedicationViewModel::saveMedication,
                             showBottomSheet = showBottomSheet,
                         )
                     }
@@ -211,8 +211,10 @@ fun HomeHeader() {
 fun MedItems(
     meds: List<Medication>,
     onEditClick: KFunction1<EditMedication, Unit>,
+    onSaveMed: KFunction1<EditMedication, Job>,
     showBottomSheet: MutableState<Boolean>,
 ) {
+
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth(),
@@ -226,6 +228,12 @@ fun MedItems(
                     onEditClick(med.toEditMedication())
                     showBottomSheet.value = true
                 },
+                onSwitchChange = {
+                    med.toEditMedication().copy(isActive = !med.isActive).apply {
+                        onSaveMed(this)
+                        onEditClick(this)
+                    }
+                }
             )
         }
 
