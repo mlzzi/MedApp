@@ -13,4 +13,5 @@ interface MedicationRepository {
 
     suspend fun delete(medication: Medication)
 
+    suspend fun update(medication: Medication)
 }

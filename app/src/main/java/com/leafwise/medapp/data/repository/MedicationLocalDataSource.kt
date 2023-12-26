@@ -11,6 +11,8 @@ interface MedicationLocalDataSource {
 
     suspend fun insertItem(medication: Medication)
 
+    suspend fun update(medication: Medication)
+
     suspend fun delete(medication: Medication)
 
 }

@@ -12,8 +12,7 @@ import kotlinx.coroutines.withContext
 import java.util.Calendar
 import javax.inject.Inject
 
-interface AddMedicationUseCase {
-
+interface UpdateMedicationUseCase {
     operator fun invoke(params: Params): Flow<ResultStatus<Unit>>
 
     data class Params(
@@ -28,17 +27,16 @@ interface AddMedicationUseCase {
         val doses: List<Calendar>,
     )
 }
-
-class AddMedicationUseCaseImpl @Inject constructor(
+class UpdateMedicationUseCaseImpl @Inject constructor(
     private val repository: MedicationRepository,
     private val dispatchers: CoroutinesDispatchers
-) : UseCase<AddMedicationUseCase.Params, Unit>(), AddMedicationUseCase {
+) : UseCase<UpdateMedicationUseCase.Params, Unit>(), UpdateMedicationUseCase {
 
-    override suspend fun doWork(params: AddMedicationUseCase.Params): ResultStatus<Unit> {
+    override suspend fun doWork(params: UpdateMedicationUseCase.Params): ResultStatus<Unit> {
         return withContext(dispatchers.io()) {
-            repository.insertItem(
+            repository.update(
                 Medication(
-                    uid = 0, //TODO needs to be removed
+                    uid = params.uid ?: 0,
                     isActive = params.isActive,
                     name = params.name,
                     type = params.type,

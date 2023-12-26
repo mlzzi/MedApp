@@ -6,6 +6,7 @@ import com.leafwise.medapp.domain.model.AlarmInterval
 import java.util.Calendar
 
 data class Medication(
+    val uid: Int,
     val isActive: Boolean,
     val name: String,
     val type: TypeMedication,
@@ -14,6 +15,18 @@ data class Medication(
     val howManyTimes: Int,
     val firstOccurrence: Calendar,
     val doses: List<Calendar>,
+)
+
+fun Medication.toEditMedication() = EditMedication(
+    uid = uid,
+    isActive = isActive,
+    name = name,
+    type = type,
+    quantity = quantity,
+    frequency = frequency,
+    howManyTimes = howManyTimes,
+    firstOccurrence = firstOccurrence,
+    doses = doses,
 )
 
 

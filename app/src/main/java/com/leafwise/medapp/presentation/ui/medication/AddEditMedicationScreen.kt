@@ -8,43 +8,49 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.leafwise.medapp.R
+import com.leafwise.medapp.domain.model.meds.EditMedication
 import com.leafwise.medapp.presentation.components.LoadingIndicator
+import kotlinx.coroutines.Job
+import kotlin.reflect.KFunction1
+
 @Suppress("UnusedParameter")
 @Composable
 fun AddEditMedicationScreen(
+    uiState: ModifyMedState,
     isEdit: Boolean,
-    showBottomSheet: MutableState<Boolean>,
     //TODO Rethink this name and action method
+    showBottomSheet: MutableState<Boolean>,
+    onUpdateMed: KFunction1<EditMedication, Unit>,
+    onSaveMed: KFunction1<EditMedication, Job>,
     onSaveMedication: (message: String) -> Unit
 ) {
-    val viewModel: AddEditMedicationViewModel = hiltViewModel()
-    val uiState = viewModel.modifyMedState.collectAsStateWithLifecycle()
 
-    val modifyMedState by remember { derivedStateOf { uiState.value } }
-
-    when (val state = modifyMedState) {
+    when (uiState) {
         is ModifyMedState.Data -> {
             MedicationSheet(
-                med = state.med,
-                canSave = state.canSave,
+                med = uiState.med,
+                canSave = uiState.canSave,
                 showBottomSheet = showBottomSheet,
-                onUpdateMed = viewModel::updateCurrentMed,
-                onSaveMed = viewModel::saveMedication,
+                onUpdateMed = onUpdateMed,
+                onSaveMed = onSaveMed,
             )
 
         }
         ModifyMedState.Loading -> {
             LoadingIndicator(modifier = Modifier.fillMaxSize())
         }
-        ModifyMedState.Saved -> {
-            onSaveMedication(stringResource(id = R.string.medication_added))
+        is ModifyMedState.Saved -> {
+            onSaveMedication(
+                if(isEdit) stringResource(id = R.string.medication_updated)
+                else stringResource(id = R.string.medication_added)
+            )
         }
         is ModifyMedState.Error -> {
-            onSaveMedication(state.error)
+            onSaveMedication(uiState.error)
         }
+
+        else -> {}
     }
 
 

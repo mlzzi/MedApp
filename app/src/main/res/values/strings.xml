@@ -59,7 +59,8 @@
     <string name="medsheet_medication">Medication</string>
     <string name="medsheet_type">Type</string>
     <string name="medsheet_quantity">Quantity</string>
-    <string name="medsheet_title">Add medication</string>
+    <string name="medsheet_add_title">Add medication</string>
+    <string name="medsheet_edit_title">Edit Medication</string>
     <string name="medsheet_frequency">Frequency</string>
     <string name="medsheet_starting_at">Starting at</string>
     <string name="medsheet_day_of_week">Day of Week</string>
@@ -78,5 +79,6 @@
     <string name="medsheet_type_aerosol_inhaler">Aerosol/Inhaler</string>
     <string name="medsheet_type_long_acting_injectable">Long-acting injectable</string>
     <string name="medication_added">The medication has been successfully added!</string>
+    <string name="medication_updated">The medication has been updated!</string>
     <string name="some_unknown_error">Some unknown error occurred.</string>
 </resources>

@@ -30,12 +30,17 @@ class RoomMedicationDataSource @Inject constructor(
         medicationDao.insertItem(medication.toMedicationEntity())
     }
 
+    override suspend fun update(medication: Medication) {
+        medicationDao.update(medication.toMedicationEntity())
+    }
+
     override suspend fun delete(medication: Medication) {
         medicationDao.delete(medication.toMedicationEntity())
     }
 
     private fun Medication.toMedicationEntity() =
         MedicationEntity(
+            uid = uid,
             isActive = isActive,
             name = name,
             type = type.ordinal,

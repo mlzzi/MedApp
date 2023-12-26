@@ -46,8 +46,10 @@ import com.leafwise.medapp.presentation.theme.Dimens
 import com.leafwise.medapp.util.extensions.ListGenerator
 import com.leafwise.medapp.util.extensions.ListGenerator.generateCalendarList
 import com.leafwise.medapp.util.extensions.ListGenerator.generateWeekdaysList
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.util.Calendar
+import kotlin.reflect.KFunction1
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,13 +57,12 @@ fun MedicationSheet(
     med: EditMedication,
     canSave: Boolean,
     showBottomSheet: MutableState<Boolean>,
-    onUpdateMed: (medication: EditMedication) -> Unit,
-    onSaveMed: (medication: EditMedication) -> Unit
+    onUpdateMed: KFunction1<EditMedication, Unit>,
+    onSaveMed: KFunction1<EditMedication, Job>,
 ) {
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
-
     val scope = rememberCoroutineScope()
 
     ModalBottomSheet(
@@ -83,7 +84,8 @@ fun MedicationSheet(
             // Sheet content
             item {
                 Text(
-                    text = stringResource(id = R.string.medsheet_title),
+                    text = if(med.uid != 0) stringResource(id = R.string.medsheet_edit_title)
+                        else stringResource(id = R.string.medsheet_add_title),
                     style = MaterialTheme.typography.headlineMedium,
                 )
             }
@@ -127,7 +129,7 @@ fun MedicationSheet(
 @Composable
 private fun MainInfo(
     med: EditMedication,
-    onUpdateMed: (medication: EditMedication) -> Unit,
+    onUpdateMed: KFunction1<EditMedication, Unit>,
 ) {
     val medName by remember(med.name) { mutableStateOf(med.name) }
     TextItem(
@@ -166,7 +168,7 @@ private fun DateInfo(
     med: EditMedication,
     medDoses: List<Calendar>,
     firstOccurrence: Calendar,
-    onUpdateMed: (medication: EditMedication) -> Unit,
+    onUpdateMed: KFunction1<EditMedication, Unit>,
 ) {
 
     val medHowManyTimes by remember(med.howManyTimes) { mutableIntStateOf(med.howManyTimes) }
@@ -257,7 +259,7 @@ private fun DateInfo(
 private fun LazyListScope.doseDateDetailItems(
     med: EditMedication,
     medDoses: List<Calendar>,
-    onUpdateMed: (medication: EditMedication) -> Unit
+    onUpdateMed: KFunction1<EditMedication, Unit>
 ) {
     return itemsIndexed(medDoses){ index, dose ->
         SelectDateItem(
