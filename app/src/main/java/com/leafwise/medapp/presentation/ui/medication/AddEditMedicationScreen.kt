@@ -40,8 +40,11 @@ fun AddEditMedicationScreen(
         ModifyMedState.Loading -> {
             LoadingIndicator(modifier = Modifier.fillMaxSize())
         }
-        ModifyMedState.Saved -> {
-            onSaveMedication(stringResource(id = R.string.medication_added))
+        is ModifyMedState.Saved -> {
+            onSaveMedication(
+                if(isEdit) stringResource(id = R.string.medication_updated)
+                else stringResource(id = R.string.medication_added)
+            )
         }
         is ModifyMedState.Error -> {
             onSaveMedication(uiState.error)

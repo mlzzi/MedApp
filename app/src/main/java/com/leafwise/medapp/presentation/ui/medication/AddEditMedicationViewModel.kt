@@ -84,7 +84,7 @@ class AddEditMedicationViewModel @Inject constructor(
             },
             success = {
                 _modifyMedState.update {
-                    ModifyMedState.Saved
+                    ModifyMedState.Saved(medication.uid != 0)
                 }
             },
             error = {

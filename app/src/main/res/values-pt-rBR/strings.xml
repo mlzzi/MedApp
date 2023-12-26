@@ -74,6 +74,7 @@
     <string name="medsheet_type_aerosol_inhaler">Aerosol/Inalador</string>
     <string name="medsheet_type_long_acting_injectable">Injetável de longa duração</string>
     <string name="medication_added">A medicação foi adicionada com sucesso!</string>
+    <string name="medication_updated">A medicação foi salva com sucesso!</string>
     <string name="some_unknown_error">Ocorreu algum erro desconhecido.</string>
     <string name="medsheet_edit_title">Editar medicação</string>
 </resources>

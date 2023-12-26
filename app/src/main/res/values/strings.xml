@@ -79,5 +79,6 @@
     <string name="medsheet_type_aerosol_inhaler">Aerosol/Inhaler</string>
     <string name="medsheet_type_long_acting_injectable">Long-acting injectable</string>
     <string name="medication_added">The medication has been successfully added!</string>
+    <string name="medication_updated">The medication has been updated!</string>
     <string name="some_unknown_error">Some unknown error occurred.</string>
 </resources>

@@ -32,7 +32,9 @@ sealed class ModifyMedState {
     ) : ModifyMedState()
 
 
-    object Saved : ModifyMedState()
+    data class Saved(
+        val isEdit: Boolean
+    ) : ModifyMedState()
 
     object Loading : ModifyMedState()
 
