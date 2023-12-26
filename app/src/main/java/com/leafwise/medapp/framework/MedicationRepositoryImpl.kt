@@ -21,6 +21,10 @@ class MedicationRepositoryImpl @Inject constructor(
         return medicationLocalDataSource.insertItem(medication)
     }
 
+    override suspend fun update(medication: Medication) {
+        return medicationLocalDataSource.update(medication)
+    }
+
     override suspend fun delete(medication: Medication) {
         return medicationLocalDataSource.delete(medication)
     }

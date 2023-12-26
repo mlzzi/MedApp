@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import com.leafwise.medapp.framework.db.entity.MedicationEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -17,6 +18,9 @@ interface MedicationDao {
 
     @Insert
     fun insertItem(medication: MedicationEntity)
+
+    @Update
+    fun update(medication: MedicationEntity)
 
     @Delete
     fun delete(medication: MedicationEntity)

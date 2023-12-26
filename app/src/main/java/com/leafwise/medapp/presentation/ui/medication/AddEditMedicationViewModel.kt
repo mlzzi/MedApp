@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leafwise.medapp.domain.model.meds.EditMedication
 import com.leafwise.medapp.domain.usecase.AddMedicationUseCase
+import com.leafwise.medapp.domain.usecase.UpdateMedicationUseCase
 import com.leafwise.medapp.util.extensions.watchStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddEditMedicationViewModel @Inject constructor(
-    private val addMedicationUseCase: AddMedicationUseCase
+    private val addMedicationUseCase: AddMedicationUseCase,
+    private val updateMedicationUseCase: UpdateMedicationUseCase,
 ) : ViewModel() {
 
     init {
@@ -46,18 +48,34 @@ class AddEditMedicationViewModel @Inject constructor(
 
     fun saveMedication(medication: EditMedication) = viewModelScope.launch {
         medication.run {
-            addMedicationUseCase.invoke(
-                AddMedicationUseCase.Params(
-                    isActive = true,
-                    name = name,
-                    type = type,
-                    quantity = quantity,
-                    frequency = frequency,
-                    howManyTimes = howManyTimes,
-                    firstOccurrence = firstOccurrence,
-                    doses = doses,
+            if (this.uid != 0) {
+                updateMedicationUseCase.invoke(
+                    UpdateMedicationUseCase.Params(
+                        uid = uid,
+                        isActive = isActive,
+                        name = name,
+                        type = type,
+                        quantity = quantity,
+                        frequency = frequency,
+                        howManyTimes = howManyTimes,
+                        firstOccurrence = firstOccurrence,
+                        doses = doses,
+                    )
                 )
-            )
+            } else {
+                addMedicationUseCase.invoke(
+                    AddMedicationUseCase.Params(
+                        isActive = isActive,
+                        name = name,
+                        type = type,
+                        quantity = quantity,
+                        frequency = frequency,
+                        howManyTimes = howManyTimes,
+                        firstOccurrence = firstOccurrence,
+                        doses = doses,
+                    )
+                )
+            }
         }.watchStatus(
             loading = {
                 _modifyMedState.update {
