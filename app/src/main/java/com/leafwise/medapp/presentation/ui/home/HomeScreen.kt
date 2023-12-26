@@ -110,10 +110,10 @@ fun HomeScreen(
         TODO("VERSION.SDK_INT < TIRAMISU")
     }
 
-    //Verify permission
-    LaunchedEffect(Unit) {
-        verifyPermissions()
-    }
+//    //Verify permission
+//    LaunchedEffect(Unit) {
+//        verifyPermissions()
+//    }
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
