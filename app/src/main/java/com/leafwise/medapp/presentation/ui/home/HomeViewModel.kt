@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@Suppress("UnusedPrivateProperty")
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val alarmUtil: AlarmUtil,
@@ -63,8 +64,8 @@ class HomeViewModel @Inject constructor(
         }
 
     fun scheduleAlarm(){
-        alarmUtil.scheduleExactAlarm(TEST_ALARM)
-        _homeUiState.value = HomeUiState.Success(listOf())
+        //alarmUtil.scheduleExactAlarm(TEST_ALARM)
+        //_homeUiState.value = HomeUiState.Success(listOf())
     }
 
     sealed class HomeUiState {
