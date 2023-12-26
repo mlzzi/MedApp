@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AssistChipDefaults
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DismissValue
 import androidx.compose.material3.ElevatedAssistChip
 import androidx.compose.material3.ElevatedCard
@@ -67,6 +68,7 @@ fun MedItem(
     item: Medication,
     onRemove: () -> Unit,
     onEdit: () -> Unit,
+    onSwitchChange: () -> Unit,
 ){
     val context = LocalContext.current
     var show by remember { mutableStateOf(true) }
@@ -103,7 +105,8 @@ fun MedItem(
                         ),
                         cardCheck = isActive,
                         footer = nextDose,
-                        onIconClick = onEdit
+                        onIconClick = onEdit,
+                        onSwitchChange = onSwitchChange,
                     )
                 }
 
@@ -123,6 +126,7 @@ fun MedItem(
 
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CardItem(
     colorStatus: Color,
@@ -131,11 +135,15 @@ private fun CardItem(
     cardCheck: Boolean,
     footer: String,
     onIconClick: () -> Unit = {},
+    onSwitchChange: () -> Unit = {},
 ) {
     ElevatedCard(
+        onClick = {},
         modifier = Modifier
             .fillMaxWidth(),
+        enabled = cardCheck,
         shape = RoundedCornerShape(10.dp),
+        colors = CardDefaults.elevatedCardColors(),
     ) {
         Row(
             modifier = Modifier
@@ -173,6 +181,7 @@ private fun CardItem(
                         // Display chips
                         for (chip in chips.take(3)) {
                             ElevatedAssistChip(
+                                enabled = cardCheck,
                                 label = { Text(chip) },
                                 colors = AssistChipDefaults.elevatedAssistChipColors(
                                     containerColor = MaterialTheme.colorScheme.secondaryContainer
@@ -212,6 +221,7 @@ private fun CardItem(
                     checked = isActive,
                     onCheckedChange = { newCheckedState ->
                         isActive = newCheckedState
+                        onSwitchChange()
                     }
                 )
             }
@@ -236,7 +246,7 @@ fun PreviewMedItem(){
                 howManyTimes = 2,
                 firstOccurrence = Calendar.getInstance(),
                 doses = listOf(),
-            ), onRemove = {}, onEdit = {},
+            ), onRemove = {}, onEdit = {}, onSwitchChange = {},
 
         )
     }
