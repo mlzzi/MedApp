@@ -24,6 +24,7 @@ class AlarmUtil @Inject constructor(
     fun scheduleExactAlarm(alarmInfo: AlarmInfo) {
         val calendar = alarmInfo.firstOccurrence
 
+        Log.d("AlarmUtil", "scheduleExactAlarm: ${calendar.timeInMillis}")
         alarmManager.setRepeating(
             AlarmManager.RTC_WAKEUP,
             calendar.timeInMillis,
@@ -33,7 +34,8 @@ class AlarmUtil @Inject constructor(
     }
 
     //TODO
-    fun removeAlarm(alarmKey: Int){
+    fun cancelAlarm(alarmKey: Int){
+        Log.d("AlarmUtil", "cancelAlarm: $alarmKey")
         alarmManager.cancel(context.makeAlarmPendingIntent(alarmKey))
     }
 
@@ -49,7 +51,7 @@ class AlarmUtil @Inject constructor(
         }
         return PendingIntent.getBroadcast(
             this,
-            0,
+            alarmKey,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
     }

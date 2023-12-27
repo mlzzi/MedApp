@@ -14,6 +14,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
 //        val taskId = intent.getIntExtra(ALARM_KEY,  0)
+        Log.d("AlarmReceiver", "onReceive")
 
         //TODO get the notification data from the database
         val test = TEST_ALARM
