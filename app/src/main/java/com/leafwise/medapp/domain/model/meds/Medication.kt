@@ -2,7 +2,9 @@ package com.leafwise.medapp.domain.model.meds
 
 import androidx.annotation.StringRes
 import com.leafwise.medapp.R
+import com.leafwise.medapp.domain.model.AlarmInfo
 import com.leafwise.medapp.domain.model.AlarmInterval
+import com.leafwise.medapp.util.extensions.ListGenerator
 import java.util.Calendar
 
 data class Medication(
@@ -15,7 +17,35 @@ data class Medication(
     val howManyTimes: Int,
     val firstOccurrence: Calendar,
     val doses: List<Calendar>,
-)
+) {
+    companion object {
+        fun Medication.toAlarmInfo(): AlarmInfo {
+            return AlarmInfo(
+                key = uid,
+                time = firstOccurrence.time.toString(),
+                title = name,
+                description = name,
+                interval = frequency,
+                firstOccurrence = firstOccurrence,
+            )
+        }
+
+        fun Medication.updateDosesByFrequency() : List<Calendar>{
+            frequency.run {
+                val updatedDoses = mutableListOf<Calendar>()
+                for (dose in doses){
+                    val nextTriggerDate = dose.clone() as Calendar
+                    nextTriggerDate.add(Calendar.MILLISECOND, frequency.getIntervalMillis().toInt())
+                    updatedDoses.add(nextTriggerDate)
+                }
+
+                return updatedDoses
+            }
+        }
+
+    }
+
+}
 
 fun Medication.toEditMedication() = EditMedication(
     uid = uid,

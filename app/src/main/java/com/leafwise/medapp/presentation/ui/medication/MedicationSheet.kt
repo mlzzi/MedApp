@@ -174,6 +174,7 @@ private fun DateInfo(
     val medHowManyTimes by remember(med.howManyTimes) { mutableIntStateOf(med.howManyTimes) }
     val medFrequency by remember(med.frequency) { mutableStateOf(med.frequency) }
     LaunchedEffect(medFrequency){
+        //TODO needs to use the new updateDosesByFrequencyChange
         medFrequency.run {
             val updatedDoses = when {
                 this < AlarmInterval.DAILY -> {

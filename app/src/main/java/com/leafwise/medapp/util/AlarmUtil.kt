@@ -24,13 +24,19 @@ class AlarmUtil @Inject constructor(
     fun scheduleExactAlarm(alarmInfo: AlarmInfo) {
         val calendar = alarmInfo.firstOccurrence
 
-        Log.d("AlarmUtil", "scheduleExactAlarm: ${calendar.timeInMillis}")
-        alarmManager.setRepeating(
+        Log.d("AlarmUtil", "setExactAndAllowIdle: ${calendar.timeInMillis}")
+        alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             calendar.timeInMillis,
-            alarmInfo.interval.getIntervalMillis(),
             context.makeAlarmPendingIntent(alarmInfo.key)
         )
+//        Log.d("AlarmUtil", "setRepeating: ${calendar.timeInMillis}")
+//        alarmManager.setRepeating(
+//            AlarmManager.RTC_WAKEUP,
+//            calendar.timeInMillis,
+//            alarmInfo.interval.getIntervalMillis(),
+//            context.makeAlarmPendingIntent(alarmInfo.key)
+//        )
     }
 
     //TODO

@@ -5,6 +5,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface MedicationLocalDataSource {
 
+    fun getItem(uid: Int): Flow<Medication>
+
     fun getAll(): Flow<List<Medication>>
 
     suspend fun insertAll(medications: List<Medication>)

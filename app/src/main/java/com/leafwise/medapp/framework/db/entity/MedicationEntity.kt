@@ -30,16 +30,18 @@ data class MedicationEntity(
     val doses: List<Calendar>,
 )
 
-fun List<MedicationEntity>.toMedicationModel() = map {
-    Medication(
-        uid = it.uid,
-        isActive = it.isActive,
-        name = it.name,
-        type = TypeMedication.values()[it.type],
-        quantity = it.quantity,
-        frequency = AlarmInterval.fromId(it.frequency),
-        howManyTimes = it.howManyTimes,
-        firstOccurrence = it.firstOccurrence,
-        doses = it.doses
+fun MedicationEntity.toMedicationModel(): Medication {
+    return Medication(
+        uid = this.uid,
+        isActive = this.isActive,
+        name = this.name,
+        type = TypeMedication.values()[this.type],
+        quantity = this.quantity,
+        frequency = AlarmInterval.fromId(this.frequency),
+        howManyTimes = this.howManyTimes,
+        firstOccurrence = this.firstOccurrence,
+        doses = this.doses
     )
 }
+
+fun List<MedicationEntity>.toMedicationModelList() = map { it.toMedicationModel() }
