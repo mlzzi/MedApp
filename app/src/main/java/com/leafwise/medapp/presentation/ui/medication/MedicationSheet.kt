@@ -174,6 +174,7 @@ private fun DateInfo(
     val medHowManyTimes by remember(med.howManyTimes) { mutableIntStateOf(med.howManyTimes) }
     val medFrequency by remember(med.frequency) { mutableStateOf(med.frequency) }
     LaunchedEffect(medFrequency){
+        //TODO needs to use the new updateDosesByFrequencyChange
         medFrequency.run {
             val updatedDoses = when {
                 this < AlarmInterval.DAILY -> {
@@ -193,7 +194,7 @@ private fun DateInfo(
     SelectorItem(
         label = stringResource(id = R.string.medsheet_frequency),
         options = AlarmInterval.values().map { stringResource(id = it.getStringRes()) }.toTypedArray(),
-        selectedIndex = medFrequency.ordinal,
+        selectedIndex = medFrequency.getId(),
         onSelect = {
             val frequencySelected = AlarmInterval.values()[it]
             onUpdateMed(med.copy(
@@ -268,7 +269,10 @@ private fun LazyListScope.doseDateDetailItems(
             onValueChange = {
                 val dosesUpdated = medDoses.toMutableList() // Convert to mutable list
                 dosesUpdated[index] = it // Update the dose at the specific index
-                onUpdateMed(med.copy(doses = dosesUpdated)) // Convert back to immutable list
+                onUpdateMed(med.copy(
+                    doses = dosesUpdated,
+                    firstOccurrence = dosesUpdated.first()
+                )) // Convert back to immutable list
             }
         )
 

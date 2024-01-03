@@ -13,6 +13,7 @@
     <string name="permission_error_required">Permisssão necessária para agendar alarme.</string>
 
     <!-- Alarm Interval Display Names -->
+    <string name="every_minute">A cada minuto</string>
     <string name="every_hour">A cada hora</string>
     <string name="every_2_hours">A cada 2 horas</string>
     <string name="every_3_hours">A cada 3 horas</string>

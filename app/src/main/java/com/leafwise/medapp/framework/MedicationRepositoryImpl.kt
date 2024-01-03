@@ -9,6 +9,10 @@ import javax.inject.Inject
 class MedicationRepositoryImpl @Inject constructor(
     private val medicationLocalDataSource: MedicationLocalDataSource
 ): MedicationRepository {
+    override fun getItem(uid: Int): Flow<Medication> {
+        return medicationLocalDataSource.getItem(uid)
+    }
+
     override fun getAll(): Flow<List<Medication>> {
         return medicationLocalDataSource.getAll()
     }

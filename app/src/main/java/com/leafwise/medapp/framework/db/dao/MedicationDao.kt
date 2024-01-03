@@ -10,6 +10,9 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MedicationDao {
+    @Query("SELECT * FROM medication WHERE uid = :uid")
+    fun getById(uid: Int): Flow<MedicationEntity>
+
     @Query("SELECT * FROM medication")
     fun getAll(): Flow<List<MedicationEntity>>
 
