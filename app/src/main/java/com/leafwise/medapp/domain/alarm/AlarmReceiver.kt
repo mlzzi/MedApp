@@ -42,31 +42,48 @@ class AlarmReceiver: BroadcastReceiver() {
 
         CoroutineScope(coroutinesDispatchers.io()).launch {
             repository.getItem(taskId).firstOrNull()?.let {
-                val nextTriggerDate = it.firstOccurrence.clone() as Calendar
-                nextTriggerDate.add(Calendar.MILLISECOND, it.frequency.getIntervalMillis().toInt())
-                val updatedMed = it.copy(
-                    firstOccurrence = nextTriggerDate,
-                    doses = it.updateDosesByFrequency()
-                )
-                repository.update(updatedMed)
-                alarmUtil.scheduleExactAlarm(updatedMed.toAlarmInfo())
-                Log.d("AlarmReceiver", "updatedMed: $updatedMed")
-                updatedMed.doses.forEach { dose ->
-                    dose.formatToHumanReadable().also { doseFormatted ->
-                        Log.d("AlarmReceiver", doseFormatted)
+
+                val now = Calendar.getInstance()
+
+                //If the first occurrence is before now, it means that we need to update the doses
+                // and the last occurrence
+                if (it.lastOccurrence.before(now)) {
+                    Log.d("AlarmReceiver", "firstOccurrence is before now")
+                    val updatedMed = it.copy(
+                        lastOccurrence = now,
+                        doses = it.updateDosesByFrequency()
+                    )
+                    repository.update(updatedMed)
+
+                } else {
+                    //I Want to threat the notification intent here
+                    AppNotifier(context).postAlarmNotification(
+                        NotificationData(
+                            id = test.key,
+                            title = test.title,
+                            content = test.description,
+                            url = "content",
+                        )
+                    )
+                    val nextTriggerDate = it.lastOccurrence.clone() as Calendar
+                    nextTriggerDate.add(Calendar.MILLISECOND, it.frequency.getIntervalMillis().toInt())
+                    val updatedMed = it.copy(
+                        lastOccurrence = nextTriggerDate,
+                        doses = it.updateDosesByFrequency()
+                    )
+                    repository.update(updatedMed)
+                    alarmUtil.scheduleExactAlarm(updatedMed.toAlarmInfo())
+                    Log.d("AlarmReceiver", "updatedMed: $updatedMed")
+                    updatedMed.doses.forEach { dose ->
+                        dose.formatToHumanReadable().also { doseFormatted ->
+                            Log.d("AlarmReceiver", doseFormatted)
+                        }
                     }
                 }
+
             }
         }
 
-        //I Want to threat the notification intent here
-        AppNotifier(context).postAlarmNotification(
-            NotificationData(
-                id = test.key,
-                title = test.title,
-                content = test.description,
-                url = "content",
-            )
-        )
+
     }
 }

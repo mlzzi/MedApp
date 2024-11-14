@@ -4,6 +4,7 @@ package com.leafwise.medapp.presentation.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
@@ -13,6 +14,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberTimePickerState
@@ -23,16 +25,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.Wallpapers
+import androidx.compose.ui.unit.dp
 import com.leafwise.medapp.R
+import com.leafwise.medapp.presentation.components.model.UiState
 import com.leafwise.medapp.presentation.extensions.getCurrentLocale
 import com.leafwise.medapp.util.extensions.toHourFormat
 import java.util.Calendar
 
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SelectorItem (
     modifier: Modifier = Modifier,
@@ -82,16 +89,39 @@ fun SelectorItem (
 fun TextItem(
     modifier: Modifier = Modifier,
     label: String,
+    description: String? = null,
     value: String,
+    state: UiState = UiState.Default,
     onChange: (String) -> Unit,
 ){
+
+    val auxColor: Color
+
+    when(state){
+        UiState.Default -> auxColor = Color.Black
+        UiState.Error -> auxColor = Color.Red
+
+    }
     OutlinedTextField(
         modifier = modifier.fillMaxWidth(),
         value = value,
         onValueChange = onChange,
         label = { Text(label) },
-        singleLine = true
+        singleLine = true,
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = auxColor,
+            unfocusedBorderColor = auxColor,
+            errorBorderColor = auxColor
+        )
     )
+
+    description?.let {
+        Text(
+            modifier = Modifier.padding(top = 4.dp),
+            text = it,
+            color = auxColor
+        )
+    }
 }
 
 @Composable

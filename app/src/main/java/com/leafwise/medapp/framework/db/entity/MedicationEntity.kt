@@ -39,7 +39,7 @@ fun MedicationEntity.toMedicationModel(): Medication {
         quantity = this.quantity,
         frequency = AlarmInterval.fromId(this.frequency),
         howManyTimes = this.howManyTimes,
-        firstOccurrence = this.firstOccurrence,
+        lastOccurrence = this.firstOccurrence,
         doses = this.doses
     )
 }

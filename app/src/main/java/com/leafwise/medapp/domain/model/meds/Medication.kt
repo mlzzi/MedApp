@@ -4,7 +4,6 @@ import androidx.annotation.StringRes
 import com.leafwise.medapp.R
 import com.leafwise.medapp.domain.model.AlarmInfo
 import com.leafwise.medapp.domain.model.AlarmInterval
-import com.leafwise.medapp.util.extensions.ListGenerator
 import java.util.Calendar
 
 data class Medication(
@@ -15,18 +14,18 @@ data class Medication(
     val quantity: Int,
     val frequency: AlarmInterval,
     val howManyTimes: Int,
-    val firstOccurrence: Calendar,
+    val lastOccurrence: Calendar,
     val doses: List<Calendar>,
 ) {
     companion object {
         fun Medication.toAlarmInfo(): AlarmInfo {
             return AlarmInfo(
                 key = uid,
-                time = firstOccurrence.time.toString(),
+                time = lastOccurrence.time.toString(),
                 title = name,
                 description = name,
                 interval = frequency,
-                firstOccurrence = firstOccurrence,
+                firstOccurrence = lastOccurrence,
             )
         }
 
@@ -55,7 +54,7 @@ fun Medication.toEditMedication() = EditMedication(
     quantity = quantity,
     frequency = frequency,
     howManyTimes = howManyTimes,
-    firstOccurrence = firstOccurrence,
+    firstOccurrence = lastOccurrence,
     doses = doses,
 )
 

@@ -45,7 +45,7 @@ class AddMedicationUseCaseImpl @Inject constructor(
                     quantity = params.quantity,
                     frequency = params.frequency,
                     howManyTimes = params.howManyTimes,
-                    firstOccurrence = params.firstOccurrence,
+                    lastOccurrence = params.firstOccurrence,
                     doses = params.doses,
                 )
             )
