@@ -55,7 +55,7 @@ class RoomMedicationDataSource @Inject constructor(
             quantity = quantity,
             frequency = frequency.getId(),
             howManyTimes = howManyTimes,
-            firstOccurrence = firstOccurrence,
+            firstOccurrence = lastOccurrence,
             doses = doses,
         )
 }

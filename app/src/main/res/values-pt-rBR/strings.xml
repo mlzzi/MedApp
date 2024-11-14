@@ -78,4 +78,5 @@
     <string name="medication_updated">A medicação foi salva com sucesso!</string>
     <string name="some_unknown_error">Ocorreu algum erro desconhecido.</string>
     <string name="medsheet_edit_title">Editar medicação</string>
+    <string name="home_last_dose">"Última dose: "</string>
 </resources>

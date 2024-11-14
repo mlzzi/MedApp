@@ -93,9 +93,10 @@ fun MedItem(
             dismissContent = {
 
                 currentItem.run {
-                    val nextDose =
-                        "${stringResource(id = R.string.home_next_dose)} " +
-                                doses.first().calculateNextOccurrence(frequency).formatToHumanReadable()
+                    val prefixFooter = if (isActive) stringResource(id = R.string.home_next_dose)
+                    else stringResource(id = R.string.home_last_dose)
+                    val nextDose = prefixFooter.plus(" ") +
+                            doses.first().calculateNextOccurrence(frequency).formatToHumanReadable()
                     CardItem(
                         colorStatus = Color.Gray,
                         title = name,
@@ -244,7 +245,7 @@ fun PreviewMedItem(){
                 quantity = 2,
                 frequency = AlarmInterval.WEEKLY,
                 howManyTimes = 2,
-                firstOccurrence = Calendar.getInstance(),
+                lastOccurrence = Calendar.getInstance(),
                 doses = listOf(),
             ), onRemove = {}, onEdit = {}, onSwitchChange = {},
 
