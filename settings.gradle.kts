@@ -9,7 +9,7 @@ pluginManagement {
     val detektVersion: String by settings
     plugins {
         id("org.jetbrains.kotlin.android") version kotlinVersion apply false
-//        id("io.gitlab.arturbosch.detekt") version detektVersion
+        id("io.gitlab.arturbosch.detekt") version detektVersion apply false
     }
 }
 dependencyResolutionManagement {

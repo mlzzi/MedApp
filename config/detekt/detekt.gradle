@@ -7,7 +7,7 @@ project.afterEvaluate{
 }
 
 detekt {
-    toolVersion = "1.23.0"
+    toolVersion = "1.23.7"
 
     def inputDirFiles = []
     rootProject.subprojects.each {module ->

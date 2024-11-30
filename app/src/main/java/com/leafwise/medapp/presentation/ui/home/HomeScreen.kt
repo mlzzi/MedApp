@@ -32,9 +32,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberDismissState
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -80,7 +79,7 @@ fun HomeScreen(
 
     val showBottomSheet = remember { mutableStateOf(false) }
     val snackBarHostState = remember { SnackbarHostState() }
-    val dismissSnackBarState = rememberDismissState()
+    val dismissSnackBarState = rememberSwipeToDismissBoxState()
     val scope = rememberCoroutineScope()
 
     val addEditMedicationViewModel: AddEditMedicationViewModel = hiltViewModel()
@@ -107,7 +106,9 @@ fun HomeScreen(
             android.Manifest.permission.POST_NOTIFICATIONS
         )
     } else {
-        TODO("VERSION.SDK_INT < TIRAMISU")
+        rememberPermissionState(
+            android.Manifest.permission.ACCESS_NOTIFICATION_POLICY
+        )
     }
 
 //    //Verify permission
