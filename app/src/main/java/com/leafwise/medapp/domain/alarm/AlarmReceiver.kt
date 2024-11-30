@@ -12,7 +12,7 @@ import com.leafwise.medapp.domain.model.meds.Medication.Companion.toAlarmInfo
 import com.leafwise.medapp.domain.model.meds.Medication.Companion.updateDosesByFrequency
 import com.leafwise.medapp.domain.notification.AppNotifier
 import com.leafwise.medapp.domain.usecase.base.CoroutinesDispatchers
-import com.leafwise.medapp.util.AlarmUtil
+import com.leafwise.medapp.util.AlarmManagement
 import com.leafwise.medapp.util.extensions.formatToHumanReadable
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -31,7 +31,7 @@ class AlarmReceiver: BroadcastReceiver() {
     lateinit var coroutinesDispatchers: CoroutinesDispatchers
 
     @Inject
-    lateinit var alarmUtil: AlarmUtil
+    lateinit var alarmManagement: AlarmManagement
 
     override fun onReceive(context: Context, intent: Intent) {
         val taskId = intent.getIntExtra(ALARM_KEY,  0)
@@ -72,7 +72,7 @@ class AlarmReceiver: BroadcastReceiver() {
                         doses = it.updateDosesByFrequency()
                     )
                     repository.update(updatedMed)
-                    alarmUtil.scheduleExactAlarm(updatedMed.toAlarmInfo())
+                    alarmManagement.scheduleExactAlarm(updatedMed.toAlarmInfo())
                     Log.d("AlarmReceiver", "updatedMed: $updatedMed")
                     updatedMed.doses.forEach { dose ->
                         dose.formatToHumanReadable().also { doseFormatted ->

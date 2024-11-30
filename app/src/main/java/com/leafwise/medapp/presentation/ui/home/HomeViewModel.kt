@@ -4,16 +4,13 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leafwise.medapp.R
-import com.leafwise.medapp.domain.model.AlarmInfo.Companion.TEST_ALARM
 import com.leafwise.medapp.domain.model.meds.Medication
 import com.leafwise.medapp.domain.usecase.GetMedicationsUseCase
-import com.leafwise.medapp.util.AlarmUtil
 import com.leafwise.medapp.util.Permissions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -21,7 +18,6 @@ import javax.inject.Inject
 @Suppress("UnusedPrivateProperty")
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val alarmUtil: AlarmUtil,
     private val permissions: Permissions,
     private val getMedicationsUseCase: GetMedicationsUseCase,
 ): ViewModel() {

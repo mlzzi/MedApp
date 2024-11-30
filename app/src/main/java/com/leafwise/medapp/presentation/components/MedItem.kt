@@ -32,7 +32,7 @@ import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberDismissState
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -73,14 +73,7 @@ fun MedItem(
     val context = LocalContext.current
     var show by remember { mutableStateOf(true) }
     val currentItem by rememberUpdatedState(item)
-    val dismissState = rememberDismissState(
-        confirmValueChange = {
-            if (it == DismissValue.DismissedToStart || it == DismissValue.DismissedToEnd) {
-                show = false
-                true
-            } else false
-        }, positionalThreshold = { 150.dp.toPx() }
-    )
+    val dismissState = rememberSwipeToDismissBoxState()
     AnimatedVisibility(
         show,exit = fadeOut(spring())
     ) {
@@ -88,7 +81,7 @@ fun MedItem(
             state = dismissState,
             modifier = Modifier,
             background = {
-                DismissBackground(dismissState)
+//                DismissBackground(dismissState)
             },
             dismissContent = {
 

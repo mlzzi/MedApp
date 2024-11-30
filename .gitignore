@@ -1,6 +1,6 @@
 *.iml
 .gradle
-/local.propertie
+/local.properties
 local.properties
 /keystore.properties
 keystore.properties

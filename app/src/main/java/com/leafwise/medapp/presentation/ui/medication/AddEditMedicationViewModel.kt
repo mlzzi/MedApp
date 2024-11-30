@@ -7,7 +7,7 @@ import com.leafwise.medapp.domain.model.AlarmInfo
 import com.leafwise.medapp.domain.model.meds.EditMedication
 import com.leafwise.medapp.domain.usecase.AddMedicationUseCase
 import com.leafwise.medapp.domain.usecase.UpdateMedicationUseCase
-import com.leafwise.medapp.util.AlarmUtil
+import com.leafwise.medapp.util.AlarmManagement
 import com.leafwise.medapp.util.extensions.watchStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddEditMedicationViewModel @Inject constructor(
-    private val alarmUtil: AlarmUtil,
+    private val alarmManagement: AlarmManagement,
     private val addMedicationUseCase: AddMedicationUseCase,
     private val updateMedicationUseCase: UpdateMedicationUseCase,
 ) : ViewModel() {
@@ -88,7 +88,7 @@ class AddEditMedicationViewModel @Inject constructor(
             success = {
                 with(medication) {
                     if(isActive){
-                        alarmUtil.scheduleExactAlarm(
+                        alarmManagement.scheduleExactAlarm(
                             AlarmInfo(
                                 key = uid,
                                 time = firstOccurrence.time.toString(),
@@ -99,7 +99,7 @@ class AddEditMedicationViewModel @Inject constructor(
                             )
                         )
                     } else {
-                        alarmUtil.cancelAlarm(uid)
+                        alarmManagement.cancelAlarm(uid)
                     }
 
                     _modifyMedState.update {

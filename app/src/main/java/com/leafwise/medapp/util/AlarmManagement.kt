@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 
 
-class AlarmUtil @Inject constructor(
+class AlarmManagement @Inject constructor(
     @ApplicationContext private val context: Context,
 ) {
 
