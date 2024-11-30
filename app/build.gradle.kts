@@ -141,8 +141,3 @@ ksp {
     arg("room.incremental", "true")
     arg("room.expandProjection", "true")
 }
-
-// Make Kapt-generated stubs to target JDK 17
-tasks.withType<org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask>().configureEach {
-    kotlinOptions.jvmTarget = "17"
-}
